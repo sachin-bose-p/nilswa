@@ -26,10 +26,10 @@ export default function Docs() {
       </AppBar>
 
       <Container maxWidth="md" sx={{ mt: 8, mb: 8 }}>
-        <Typography variant="h3" gutterBottom fontWeight="bold">
+        <Typography variant="h3" gutterBottom sx={{ fontWeight: "bold" }}>
           Help & Documentation
         </Typography>
-        <Typography variant="subtitle1" color="text.secondary" paragraph>
+        <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2 }}>
           Learn how to subscribe, configure, and use Nilswa Cloud Services products.
         </Typography>
 
@@ -39,7 +39,7 @@ export default function Docs() {
           </Typography>
           <Accordion sx={{ mb: 1 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography fontWeight="bold">How to subscribe to CATS?</Typography>
+              <Typography sx={{ fontWeight: "bold" }}>How to subscribe to CATS?</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography color="text.secondary">
@@ -49,7 +49,7 @@ export default function Docs() {
           </Accordion>
           <Accordion sx={{ mb: 4 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography fontWeight="bold">How to customize my CATS instance?</Typography>
+              <Typography sx={{ fontWeight: "bold" }}>How to customize my CATS instance?</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography color="text.secondary">
@@ -63,7 +63,7 @@ export default function Docs() {
           </Typography>
           <Accordion sx={{ mb: 1 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography fontWeight="bold">Setting up BLESS for your crew</Typography>
+              <Typography sx={{ fontWeight: "bold" }}>Setting up BLESS for your crew</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography color="text.secondary">
@@ -73,7 +73,7 @@ export default function Docs() {
           </Accordion>
           <Accordion sx={{ mb: 4 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography fontWeight="bold">Compliance Reporting</Typography>
+              <Typography sx={{ fontWeight: "bold" }}>Compliance Reporting</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography color="text.secondary">
@@ -87,7 +87,7 @@ export default function Docs() {
           </Typography>
           <Accordion sx={{ mb: 1 }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography fontWeight="bold">Accessing Bedrock-like Models</Typography>
+              <Typography sx={{ fontWeight: "bold" }}>Accessing Bedrock-like Models</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography color="text.secondary">

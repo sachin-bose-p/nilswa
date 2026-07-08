@@ -58,22 +58,22 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
         <Typography variant="h2" sx={{ mr: 3 }}>{product.icon}</Typography>
-        <Typography variant="h3" fontWeight="bold">
+        <Typography variant="h3" sx={{ fontWeight: "bold" }}>
           {product.title}
         </Typography>
       </Box>
 
       <Grid container spacing={6}>
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Paper sx={{ p: 4, mb: 4, background: 'rgba(30, 41, 59, 0.5)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.05)' }}>
-            <Typography variant="h5" gutterBottom fontWeight="bold">Overview</Typography>
-            <Typography color="text.secondary" paragraph sx={{ fontSize: '1.1rem', lineHeight: 1.8 }}>
+            <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold" }}>Overview</Typography>
+            <Typography color="text.secondary" sx={{ mb: 2, fontSize: '1.1rem', lineHeight: 1.8 }}>
               {product.description}
             </Typography>
             
             <Divider sx={{ my: 4, borderColor: 'rgba(255,255,255,0.1)' }} />
             
-            <Typography variant="h5" gutterBottom fontWeight="bold">Key Features</Typography>
+            <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold" }}>Key Features</Typography>
             <Box component="ul" sx={{ pl: 3, color: 'text.secondary' }}>
               {product.features.map((f: string, idx: number) => (
                 <Typography component="li" key={idx} sx={{ mb: 1, fontSize: '1.1rem' }}>
@@ -84,19 +84,19 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Paper sx={{ p: 4, background: 'rgba(99, 102, 241, 0.1)', border: '1px solid rgba(99, 102, 241, 0.3)' }}>
-            <Typography variant="h5" gutterBottom fontWeight="bold" align="center">Pricing Plans</Typography>
+            <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold" }} align="center">Pricing Plans</Typography>
             
             <Box sx={{ my: 4, textAlign: 'center' }}>
-              <Typography variant="h3" color="primary.main" fontWeight="bold">
+              <Typography variant="h3" color="primary.main" sx={{ fontWeight: "bold" }}>
                 {product.pricing.monthly}
               </Typography>
               <Typography color="text.secondary">billed monthly</Typography>
             </Box>
             
             <Box sx={{ my: 4, textAlign: 'center' }}>
-              <Typography variant="h4" fontWeight="bold">
+              <Typography variant="h4" sx={{ fontWeight: "bold" }}>
                 {product.pricing.annual}
               </Typography>
               <Typography color="text.secondary">billed annually (save ~15%)</Typography>

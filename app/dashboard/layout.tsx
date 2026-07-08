@@ -67,7 +67,7 @@ export default function DashboardLayout({
         anchor="left"
       >
         <Box sx={{ p: 3 }}>
-          <Typography variant="h5" fontWeight="bold">
+          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
             <Box component="span" sx={{ color: 'primary.main' }}>NILSWA</Box> Portal
           </Typography>
         </Box>

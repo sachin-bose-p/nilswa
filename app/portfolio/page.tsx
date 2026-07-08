@@ -38,7 +38,7 @@ export default function Portfolio() {
   return (
     <Box sx={{ py: 10, flexGrow: 1 }}>
       <Container maxWidth="lg">
-        <Typography variant="h2" align="center" gutterBottom fontWeight="bold">
+        <Typography variant="h2" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
           Our Product <Box component="span" sx={{ color: 'primary.main' }}>Portfolio</Box>
         </Typography>
         <Typography variant="h6" align="center" color="text.secondary" sx={{ mb: 8, maxWidth: '700px', mx: 'auto' }}>
@@ -47,7 +47,7 @@ export default function Portfolio() {
 
         <Grid container spacing={4}>
           {products.map((prod) => (
-            <Grid item xs={12} md={4} key={prod.id}>
+            <Grid size={{ xs: 12, md: 4 }} key={prod.id}>
               <Card sx={{ 
                 height: '100%', 
                 display: 'flex', 
@@ -65,10 +65,10 @@ export default function Portfolio() {
               }}>
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Typography variant="h2" sx={{ mb: 2 }}>{prod.icon}</Typography>
-                  <Typography gutterBottom variant="h4" component="h2" fontWeight="bold">
+                  <Typography gutterBottom variant="h4" component="h2" sx={{ fontWeight: "bold" }}>
                     {prod.title}
                   </Typography>
-                  <Typography color="text.secondary" paragraph>
+                  <Typography color="text.secondary" sx={{ mb: 2 }}>
                     {prod.desc}
                   </Typography>
                   <Box component="ul" sx={{ pl: 2, color: 'text.secondary', mb: 3 }}>

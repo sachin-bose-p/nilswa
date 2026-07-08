@@ -56,7 +56,7 @@ export default function Login() {
           borderRadius: 4,
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
         }}>
-          <Typography variant="h3" align="center" gutterBottom fontWeight="bold">
+          <Typography variant="h3" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
             Sign <Box component="span" sx={{ color: 'primary.main' }}>In</Box>
           </Typography>
           <Typography align="center" color="text.secondary" sx={{ mb: 4 }}>

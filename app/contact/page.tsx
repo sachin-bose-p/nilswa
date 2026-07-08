@@ -13,7 +13,7 @@ export default function Contact() {
   return (
     <Box sx={{ py: 10, flexGrow: 1 }}>
       <Container maxWidth="md">
-        <Typography variant="h2" align="center" gutterBottom fontWeight="bold">
+        <Typography variant="h2" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
           Get in <Box component="span" sx={{ color: 'primary.main' }}>Touch</Box>
         </Typography>
         <Typography variant="h6" align="center" color="text.secondary" sx={{ mb: 8 }}>
@@ -28,7 +28,7 @@ export default function Contact() {
           borderRadius: 4
         }}>
           <Grid container spacing={4}>
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <TextField 
                 fullWidth 
                 label="Full Name" 
@@ -48,7 +48,7 @@ export default function Contact() {
                 sx={{ mb: 3 }}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <TextField 
                 fullWidth 
                 label="Your Message" 
@@ -58,7 +58,7 @@ export default function Contact() {
                 sx={{ mb: 3 }}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Button variant="contained" size="large" fullWidth sx={{ py: 2, fontSize: '1.1rem' }}>
                 Send Message
               </Button>

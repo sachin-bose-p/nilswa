@@ -37,7 +37,7 @@ export default function DashboardOverview() {
 
   return (
     <Box>
-      <Typography variant="h3" gutterBottom fontWeight="bold">
+      <Typography variant="h3" gutterBottom sx={{ fontWeight: "bold" }}>
         Welcome to your <Box component="span" sx={{ color: 'primary.main' }}>Dashboard</Box>
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 6 }}>
@@ -45,7 +45,7 @@ export default function DashboardOverview() {
       </Typography>
 
       <Paper sx={{ p: 4, mb: 6, background: 'rgba(99, 102, 241, 0.1)', border: '1px solid rgba(99, 102, 241, 0.3)' }}>
-        <Typography variant="h5" gutterBottom fontWeight="bold">
+        <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold" }}>
           Active Subscriptions
         </Typography>
         <Typography color="text.secondary">
@@ -53,13 +53,13 @@ export default function DashboardOverview() {
         </Typography>
       </Paper>
 
-      <Typography variant="h4" gutterBottom fontWeight="bold" sx={{ mb: 4 }}>
+      <Typography variant="h4" gutterBottom sx={{ fontWeight: "bold", mb: 4  }}>
         Available Products
       </Typography>
 
       <Grid container spacing={4}>
         {products.map((prod) => (
-          <Grid item xs={12} md={4} key={prod.id}>
+          <Grid size={{ xs: 12, md: 4 }} key={prod.id}>
             <Card sx={{ 
               height: '100%', 
               display: 'flex', 
@@ -73,12 +73,12 @@ export default function DashboardOverview() {
               <CardContent sx={{ flexGrow: 1 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                   <Typography variant="h3" sx={{ mr: 2 }}>{prod.icon}</Typography>
-                  <Typography variant="h5" fontWeight="bold">{prod.title}</Typography>
+                  <Typography variant="h5" sx={{ fontWeight: "bold" }}>{prod.title}</Typography>
                 </Box>
-                <Typography color="text.secondary" paragraph>
+                <Typography color="text.secondary" sx={{ mb: 2 }}>
                   {prod.desc}
                 </Typography>
-                <Typography variant="body2" color="success.main" fontWeight="bold" sx={{ mb: 2 }}>
+                <Typography variant="body2" color="success.main" sx={{ fontWeight: "bold", mb: 2  }}>
                   {prod.status}
                 </Typography>
                 <Button variant="contained" fullWidth component={Link} href={`/dashboard/product/${prod.id}`}>

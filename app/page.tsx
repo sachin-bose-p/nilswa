@@ -33,8 +33,8 @@ export default function Home() {
           }} 
         />
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-          <Grid container spacing={4} alignItems="center">
-            <Grid item xs={12} md={7}>
+          <Grid container spacing={4} sx={{ alignItems: 'center' }}>
+            <Grid size={{ xs: 12, md: 7 }}>
               <Typography variant="h1" gutterBottom sx={{ fontWeight: 800, background: '-webkit-linear-gradient(45deg, #818cf8 30%, #ec4899 90%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 Next-Gen Enterprise Solutions
               </Typography>
