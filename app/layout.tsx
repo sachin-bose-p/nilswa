@@ -13,6 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry";
+import Navbar from "@/components/Navbar";
+import Box from "@mui/material/Box";
 
 export const metadata: Metadata = {
   title: "Nilswa Cloud Services (NCS)",
@@ -28,7 +30,10 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
         <ThemeRegistry>
-          {children}
+          <Navbar />
+          <Box component="main" sx={{ flexGrow: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+            {children}
+          </Box>
         </ThemeRegistry>
       </body>
     </html>
