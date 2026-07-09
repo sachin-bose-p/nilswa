@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Box, Typography, Drawer, List, ListItem, ListItemButton, 
   ListItemIcon, ListItemText, AppBar, Toolbar, IconButton, 
-  Avatar, Paper, Divider, Button, Dialog, InputBase, Grid
+  Avatar, Paper, Divider, Button, Dialog, InputBase, Grid, Fade, Badge
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -21,14 +21,33 @@ import FlightIcon from '@mui/icons-material/Flight';
 import SecurityIcon from '@mui/icons-material/Security';
 import ComputerIcon from '@mui/icons-material/Computer';
 import StorageIcon from '@mui/icons-material/Storage';
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import SensorsIcon from '@mui/icons-material/Sensors';
+import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
+import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
+import AddIcon from '@mui/icons-material/Add';
+import GroupIcon from '@mui/icons-material/Group';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import CloseIcon from '@mui/icons-material/Close';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import WebIcon from '@mui/icons-material/Web';
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import DnsIcon from '@mui/icons-material/Dns';
 
-const drawerWidth = 240;
+const drawerWidthExpanded = 240;
+const drawerWidthCollapsed = 72;
 
 export default function DashboardPage() {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const drawerWidth = collapsed ? drawerWidthCollapsed : drawerWidthExpanded;
 
   // Handle Ctrl+F for search menu
   useEffect(() => {
@@ -51,79 +70,89 @@ export default function DashboardPage() {
     router.push('/login');
   };
 
-  const menuItems = [
-    { text: 'Overview', icon: <DashboardIcon sx={{ fontSize: 20 }} /> },
-    { text: 'Services', icon: <AppsIcon sx={{ fontSize: 20 }} />, onClick: () => setSearchOpen(true) },
-    { text: 'Analytics', icon: <AssessmentIcon sx={{ fontSize: 20 }} /> },
-    { text: 'Settings', icon: <SettingsIcon sx={{ fontSize: 20 }} /> },
+  const sections = [
+    {
+      title: 'OVERVIEW',
+      items: [
+        { text: 'Dashboard', icon: <DashboardIcon sx={{ fontSize: 20 }} />, active: true },
+        { text: 'My Portal', icon: <WebIcon sx={{ fontSize: 20 }} />, active: false, onClick: () => setSearchOpen(true) },
+      ]
+    },
+    {
+      title: 'INFRASTRUCTURE',
+      items: [
+        { text: 'Instances', icon: <ComputerIcon sx={{ fontSize: 20 }} />, active: false },
+        { text: 'Storage', icon: <StorageIcon sx={{ fontSize: 20 }} />, active: false },
+        { text: 'Networking', icon: <CompareArrowsIcon sx={{ fontSize: 20 }} />, active: false },
+      ]
+    },
+    {
+      title: 'OPERATIONS',
+      items: [
+        { text: 'Activity Logs', icon: <AccessTimeIcon sx={{ fontSize: 20 }} />, active: false },
+        { text: 'Deployments', icon: <DnsIcon sx={{ fontSize: 20 }} />, active: false },
+      ]
+    }
   ];
-
-  const pinnedServices = [
-    { name: 'Airline Crew', icon: <FlightIcon sx={{ color: '#0ea5e9', fontSize: 32 }} /> },
-    { name: 'Alcohol Check', icon: <LocalHospitalIcon sx={{ color: '#10b981', fontSize: 32 }} /> },
-    { name: 'Real Estate CRM', icon: <WorkIcon sx={{ color: '#f59e0b', fontSize: 32 }} /> },
-    { name: 'IAM Console', icon: <SecurityIcon sx={{ color: '#8b5cf6', fontSize: 32 }} /> },
-    { name: 'Compute Instances', icon: <ComputerIcon sx={{ color: '#ec4899', fontSize: 32 }} /> },
-    { name: 'Cloud Storage', icon: <StorageIcon sx={{ color: '#64748b', fontSize: 32 }} /> },
-  ];
-
-  const filteredServices = pinnedServices.filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   const drawer = (
-    <Box sx={{ backgroundColor: '#ffffff', height: '100%', color: '#334155', borderRight: '1px solid #e2e8f0' }}>
-      <Toolbar sx={{ px: 2, py: 1, minHeight: '64px !important', display: 'flex', alignItems: 'center' }}>
-        <img src="/images/logo.jpg" alt="NILSWA Logo" style={{ height: '36px', width: 'auto', borderRadius: '4px', marginRight: '8px' }} />
-        <Typography variant="body2" sx={{ fontWeight: 800, letterSpacing: '1px', color: '#0f172a', mt: 0.5 }}>
-          NILSWA
-        </Typography>
-      </Toolbar>
+    <Box sx={{ backgroundColor: '#ffffff', height: '100%', color: '#334155', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', height: '80px' }}>
+        <img src="/images/logo.jpg" alt="NILSWA Logo" style={{ height: '40px', width: 'auto', borderRadius: '4px', marginRight: collapsed ? 0 : '12px' }} />
+        {!collapsed && (
+          <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#0ea5e9', lineHeight: 1.2 }}>
+              NILSWA
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.7rem' }}>
+              Enterprise Cloud
+            </Typography>
+          </Box>
+        )}
+      </Box>
       
-      <List sx={{ pt: 1, px: 2 }}>
-        {menuItems.map((item, index) => {
-          const isActive = index === 0;
-          return (
-            <ListItem key={item.text} disablePadding sx={{ mb: 0.5 }}>
-              <ListItemButton 
-                onClick={item.onClick}
-                sx={{ 
-                  py: 1, 
-                  px: 1.5, 
-                  borderRadius: 1.5,
-                  backgroundColor: isActive ? '#f0f9ff' : 'transparent',
-                  color: isActive ? '#0ea5e9' : '#475569',
-                  '&:hover': { backgroundColor: isActive ? '#f0f9ff' : '#f8fafc' } 
-                }}
-              >
-                <ListItemIcon sx={{ color: isActive ? '#0ea5e9' : '#64748b', minWidth: 32 }}>
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText primary={item.text} slotProps={{ primary: { sx: { fontWeight: isActive ? 600 : 500, fontSize: '0.85rem' } } }} />
-              </ListItemButton>
-            </ListItem>
-          );
-        })}
-      </List>
+      <Box sx={{ flexGrow: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+        {sections.map((section, idx) => (
+          <Box key={idx} sx={{ mb: 2 }}>
+            {!collapsed && (
+              <Typography sx={{ px: 3, py: 1, fontSize: '0.65rem', fontWeight: 700, color: '#94a3b8', letterSpacing: '1px' }}>
+                {section.title}
+              </Typography>
+            )}
+            <List sx={{ py: 0, px: collapsed ? 1 : 0 }}>
+              {section.items.map((item) => (
+                <ListItem key={item.text} disablePadding sx={{ mb: 0.5, px: collapsed ? 0 : 2 }}>
+                  <ListItemButton 
+                    onClick={item.onClick}
+                    sx={{ 
+                      py: 1, 
+                      px: collapsed ? 0 : 2, 
+                      justifyContent: collapsed ? 'center' : 'flex-start',
+                      borderRadius: collapsed ? 1.5 : 1,
+                      backgroundColor: item.active ? '#eff6ff' : 'transparent',
+                      color: item.active ? '#1d4ed8' : '#64748b',
+                      borderLeft: item.active && !collapsed ? '3px solid #3b82f6' : '3px solid transparent',
+                      '&:hover': { backgroundColor: item.active ? '#eff6ff' : '#f8fafc' } 
+                    }}
+                  >
+                    <ListItemIcon sx={{ color: item.active ? '#3b82f6' : '#94a3b8', minWidth: collapsed ? 'auto' : 36, display: 'flex', justifyContent: 'center' }}>
+                      {item.icon}
+                    </ListItemIcon>
+                    {!collapsed && (
+                      <ListItemText primary={item.text} slotProps={{ primary: { sx: { fontWeight: item.active ? 600 : 500, fontSize: '0.85rem' } } }} />
+                    )}
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+        ))}
+      </Box>
       
-      <Box sx={{ position: 'absolute', bottom: 0, width: '100%', p: 2 }}>
-        <Divider sx={{ borderColor: '#e2e8f0', mb: 2 }} />
-        <Button 
-          fullWidth 
-          variant="text" 
-          startIcon={<LogoutIcon sx={{ fontSize: 18 }} />} 
-          onClick={handleLogout}
-          sx={{ 
-            color: '#64748b', 
-            textTransform: 'none',
-            fontWeight: 600,
-            fontSize: '0.85rem',
-            justifyContent: 'flex-start',
-            px: 1.5,
-            py: 1,
-            '&:hover': { backgroundColor: '#f1f5f9', color: '#0f172a' }
-          }}
-        >
-          Sign Out
-        </Button>
+      <Box sx={{ p: 2, display: 'flex', justifyContent: collapsed ? 'center' : 'flex-end', borderTop: '1px solid #f1f5f9' }}>
+        <IconButton onClick={() => setCollapsed(!collapsed)} sx={{ color: '#94a3b8', '&:hover': { color: '#0f172a', backgroundColor: '#f1f5f9' } }}>
+          {collapsed ? <KeyboardDoubleArrowRightIcon /> : <KeyboardDoubleArrowLeftIcon />}
+        </IconButton>
       </Box>
     </Box>
   );
@@ -136,52 +165,63 @@ export default function DashboardPage() {
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
-          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-          backdropFilter: 'blur(12px)',
+          backgroundColor: '#ffffff',
           color: '#0f172a',
           borderBottom: '1px solid #e2e8f0',
+          transition: 'width 0.2s, margin 0.2s',
         }}
       >
-        <Toolbar sx={{ minHeight: '64px !important' }}>
-          <IconButton
-            color="inherit"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
-          >
+        <Toolbar sx={{ minHeight: '64px !important', px: { xs: 2, sm: 3 } }}>
+          <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ mr: 2, display: { sm: 'none' } }}>
             <MenuIcon />
           </IconButton>
-          <Typography variant="subtitle1" noWrap component="div" sx={{ flexGrow: 1, fontWeight: 700, color: '#0f172a' }}>
-            Dashboard Overview
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, color: '#0f172a', fontSize: '1.1rem', lineHeight: 1.2 }}>
+              Dashboard
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.75rem' }}>
+              NILSWA Operations Center • Company ID: NILSWA Enterprise
+            </Typography>
+          </Box>
+          
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Button 
-              onClick={() => setSearchOpen(true)}
+              variant="outlined" 
+              size="small"
+              startIcon={<SensorsIcon sx={{ fontSize: 16 }} />}
               sx={{ 
-                display: { xs: 'none', md: 'flex' }, 
-                textTransform: 'none', 
-                color: '#64748b', 
-                backgroundColor: '#f1f5f9', 
-                borderRadius: 4, 
-                px: 2, 
-                py: 0.5,
-                fontSize: '0.8rem',
-                mr: 2,
-                '&:hover': { backgroundColor: '#e2e8f0' }
+                display: { xs: 'none', sm: 'flex' },
+                color: '#10b981', 
+                borderColor: '#10b981',
+                borderRadius: '16px',
+                px: 1.5,
+                py: 0.25,
+                textTransform: 'none',
+                fontWeight: 600,
+                fontSize: '0.75rem',
+                '&:hover': { backgroundColor: '#ecfdf5', borderColor: '#059669' }
               }}
             >
-              <SearchIcon sx={{ fontSize: 16, mr: 1 }} />
-              Search services (Ctrl+F)
+              Live
             </Button>
-            <Typography variant="caption" sx={{ fontWeight: 600, color: '#475569', display: { xs: 'none', md: 'block' }, fontSize: '0.8rem' }}>
-              Admin User
-            </Typography>
-            <Avatar sx={{ bgcolor: '#0ea5e9', width: 32, height: 32, fontWeight: 600, fontSize: '0.9rem' }}>A</Avatar>
+            <IconButton sx={{ color: '#64748b' }}>
+              <Badge variant="dot" color="error">
+                <NotificationsNoneIcon />
+              </Badge>
+            </IconButton>
+            <Avatar sx={{ bgcolor: '#3b82f6', width: 36, height: 36, fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer' }}>AD</Avatar>
           </Box>
         </Toolbar>
+        <Box sx={{ px: 3, display: 'flex', borderTop: '1px solid #f1f5f9' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', py: 1.5, borderBottom: '2px solid #3b82f6', color: '#1d4ed8' }}>
+            <DashboardIcon sx={{ fontSize: 18, mr: 1 }} />
+            <Typography sx={{ fontWeight: 600, fontSize: '0.85rem' }}>Dashboard</Typography>
+          </Box>
+        </Box>
       </AppBar>
       
-      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
+      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 }, transition: 'width 0.2s' }}>
         <Drawer
           variant="temporary"
           open={mobileOpen}
@@ -189,7 +229,7 @@ export default function DashboardPage() {
           ModalProps={{ keepMounted: true }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidthExpanded },
           }}
         >
           {drawer}
@@ -198,7 +238,7 @@ export default function DashboardPage() {
           variant="permanent"
           sx={{
             display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, borderRight: 'none' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, borderRight: '1px solid #e2e8f0', transition: 'width 0.2s' },
           }}
           open
         >
@@ -206,119 +246,150 @@ export default function DashboardPage() {
         </Drawer>
       </Box>
       
-      <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, width: { sm: `calc(100% - ${drawerWidth}px)` }, mt: '64px' }}>
+      <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, width: { sm: `calc(100% - ${drawerWidth}px)` }, mt: '112px', transition: 'width 0.2s' }}>
         
+        {/* Header Section */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
+          <Box>
+            <Typography variant="h4" sx={{ fontWeight: 800, color: '#0f172a', mb: 0.5 }}>
+              Operations Overview
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#64748b' }}>
+              Real-time summary of cloud operations, instance status, and storage assignments. Drag to reorder, click gear to resize or theme.
+            </Typography>
+          </Box>
+          <Button 
+            variant="contained" 
+            startIcon={<AddIcon />}
+            sx={{ 
+              backgroundColor: '#3b82f6', 
+              textTransform: 'none', 
+              fontWeight: 600, 
+              borderRadius: '6px',
+              boxShadow: 'none',
+              '&:hover': { backgroundColor: '#2563eb', boxShadow: 'none' }
+            }}
+          >
+            Add Widget
+          </Button>
+        </Box>
+
         {/* KPI Cards */}
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 2, mb: 4 }}>
-          {['Active Instances', 'Total Storage', 'Bandwidth Usage', 'Health Status'].map((title, i) => (
-            <Box key={title}>
-              <Paper elevation={0} sx={{ 
-                p: 2.5, 
-                borderRadius: 3, 
-                backgroundColor: '#ffffff',
-                border: '1px solid #f1f5f9',
-                boxShadow: '0 2px 4px -1px rgb(0 0 0 / 0.05)',
-                display: 'flex', 
-                flexDirection: 'column' 
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 2, mb: 3 }}>
+          {[
+            { title: 'ACTIVE INSTANCES', val: '6', sub: 'running & active', color: '#3b82f6', bg: '#eff6ff', icon: <GroupIcon sx={{ color: '#3b82f6' }} /> },
+            { title: 'PENDING ALERTS', val: '0', sub: 'awaiting review', color: '#f59e0b', bg: '#fffbeb', icon: <HourglassEmptyIcon sx={{ color: '#f59e0b' }} /> },
+            { title: 'TOTAL STORAGE', val: '4.2 TB', sub: 'total allocated', color: '#10b981', bg: '#ecfdf5', icon: <StorageIcon sx={{ color: '#10b981' }} /> },
+            { title: 'DEPLOYMENTS', val: '4', sub: 'scheduled tasks', color: '#a855f7', bg: '#faf5ff', icon: <CalendarTodayIcon sx={{ color: '#a855f7' }} /> },
+          ].map((card, i) => (
+            <Paper key={i} elevation={0} sx={{ 
+              p: 2.5, 
+              borderRadius: '12px', 
+              backgroundColor: '#ffffff',
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+              display: 'flex',
+              justifyContent: 'space-between'
+            }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Typography sx={{ color: '#94a3b8', fontSize: '0.65rem', fontWeight: 700, mb: 1, letterSpacing: '1px' }}>
+                  {card.title}
+                </Typography>
+                <Typography sx={{ fontWeight: 700, color: card.color, fontSize: '1.75rem', lineHeight: 1 }}>
+                  {card.val}
+                </Typography>
+                <Typography sx={{ color: '#64748b', fontSize: '0.75rem', mt: 1 }}>
+                  {card.sub}
+                </Typography>
+              </Box>
+              <Box sx={{ 
+                width: 48, height: 48, borderRadius: '50%', backgroundColor: card.bg,
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
               }}>
-                <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, mb: 0.5, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  {title}
-                </Typography>
-                <Typography variant="h5" sx={{ fontWeight: 800, color: '#0f172a' }}>
-                  {i === 0 ? '12' : i === 1 ? '4.2 TB' : i === 2 ? '890 GB' : '99.9%'}
-                </Typography>
-              </Paper>
-            </Box>
+                {card.icon}
+              </Box>
+            </Paper>
           ))}
         </Box>
 
         {/* Charts & Activity */}
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '2fr 1fr' }, gap: 3 }}>
-          <Box>
-            <Paper elevation={0} sx={{ 
-              p: 3, 
-              borderRadius: 3, 
-              backgroundColor: '#ffffff',
-              border: '1px solid #f1f5f9',
-              boxShadow: '0 2px 4px -1px rgb(0 0 0 / 0.05)',
-              minHeight: '300px',
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2, color: '#0f172a' }}>Resource Utilization</Typography>
-              <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                alignItems: 'center', 
-                flexGrow: 1, 
-                backgroundColor: '#f8fafc', 
-                borderRadius: 2,
-                border: '1px dashed #cbd5e1'
-              }}>
-                <Typography variant="body2" sx={{ color: '#94a3b8', fontWeight: 500 }}>Interactive Chart Area</Typography>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
+          {/* Widget 1 */}
+          <Paper elevation={0} sx={{ 
+            p: 3, 
+            borderRadius: '12px', 
+            backgroundColor: '#ffffff',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+            minHeight: '350px',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+              <Box>
+                <Typography sx={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>Resource Request Status</Typography>
+                <Typography sx={{ color: '#64748b', fontSize: '0.75rem', mt: 0.5 }}>Distribution by approval status</Typography>
               </Box>
-            </Paper>
-          </Box>
-          <Box>
-            <Paper elevation={0} sx={{ 
-              p: 3, 
-              borderRadius: 3, 
-              backgroundColor: '#ffffff',
-              border: '1px solid #f1f5f9',
-              boxShadow: '0 2px 4px -1px rgb(0 0 0 / 0.05)',
-              minHeight: '300px' 
-            }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2, color: '#0f172a' }}>Recent Activity</Typography>
-              <List disablePadding>
-                {[
-                  { action: 'Instance deployed in ap-northeast-1', time: '2 mins ago' },
-                  { action: 'Daily Backup completed', time: '1 hour ago' },
-                  { action: 'MFA Verified for Admin', time: '3 hours ago' },
-                  { action: 'New API Key generated', time: '5 hours ago' },
-                ].map((log, i) => (
-                  <React.Fragment key={i}>
-                    <ListItem alignItems="flex-start" sx={{ px: 0, py: 1.5 }}>
-                      <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#0ea5e9', mt: 1, mr: 1.5 }} />
-                      <ListItemText
-                        primary={log.action}
-                        secondary={log.time}
-                        slotProps={{
-                          primary: { sx: { fontWeight: 600, fontSize: '0.85rem', color: '#334155' } },
-                          secondary: { sx: { fontSize: '0.75rem', mt: 0.25, color: '#94a3b8' } }
-                        }}
-                      />
-                    </ListItem>
-                    {i < 3 && <Divider sx={{ borderColor: '#f1f5f9' }} />}
-                  </React.Fragment>
-                ))}
-              </List>
-            </Paper>
-          </Box>
+            </Box>
+            <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Typography sx={{ color: '#64748b', fontSize: '0.85rem' }}>No request data yet</Typography>
+            </Box>
+          </Paper>
+
+          {/* Widget 2 */}
+          <Paper elevation={0} sx={{ 
+            p: 3, 
+            borderRadius: '12px', 
+            backgroundColor: '#ffffff',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+            minHeight: '350px',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <DragIndicatorIcon sx={{ color: '#cbd5e1', fontSize: 20, cursor: 'grab' }} />
+                <Box>
+                  <Typography sx={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>Instance Type Breakdown</Typography>
+                  <Typography sx={{ color: '#64748b', fontSize: '0.75rem', mt: 0.5 }}>Number of instances by category</Typography>
+                </Box>
+              </Box>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <SettingsIcon sx={{ color: '#0f172a', fontSize: 18, cursor: 'pointer' }} />
+                <CloseIcon sx={{ color: '#0f172a', fontSize: 18, cursor: 'pointer' }} />
+              </Box>
+            </Box>
+            <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Typography sx={{ color: '#64748b', fontSize: '0.85rem' }}>No instance data yet</Typography>
+            </Box>
+          </Paper>
         </Box>
       </Box>
 
-      {/* Windows 11 Style Start Menu Overlay */}
+      {/* Windows 11 Style Start Menu Overlay (Triggered by Ctrl+F or My Portal) */}
       <Dialog 
         open={searchOpen} 
         onClose={() => setSearchOpen(false)}
         slotProps={{
           paper: {
             sx: {
-            position: 'absolute',
-            bottom: { xs: 0, md: 'auto' },
-            top: { xs: 'auto', md: '15vh' },
-            m: 0,
-            width: '100%',
-            maxWidth: '640px',
-            borderRadius: { xs: '16px 16px 0 0', md: '12px' },
-            backgroundColor: '#1e1e1e', // Win11 Dark Theme
-            color: '#ffffff',
-            boxShadow: '0 24px 48px rgba(0,0,0,0.5)',
-            border: '1px solid rgba(255,255,255,0.05)',
-            backgroundImage: 'linear-gradient(145deg, rgba(255,255,255,0.03) 0%, transparent 100%)',
-            backdropFilter: 'blur(20px)'
+              position: 'absolute',
+              bottom: { xs: 0, md: 'auto' },
+              top: { xs: 'auto', md: '15vh' },
+              m: 0,
+              width: '100%',
+              maxWidth: '640px',
+              borderRadius: { xs: '16px 16px 0 0', md: '12px' },
+              backgroundColor: '#1e1e1e', // Win11 Dark Theme
+              color: '#ffffff',
+              boxShadow: '0 24px 48px rgba(0,0,0,0.5)',
+              border: '1px solid rgba(255,255,255,0.05)',
+              backgroundImage: 'linear-gradient(145deg, rgba(255,255,255,0.03) 0%, transparent 100%)',
+              backdropFilter: 'blur(20px)'
+            }
           }
-        }}}
+        }}
       >
         <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', height: { xs: '70vh', md: '600px' } }}>
           {/* Search Bar */}
@@ -352,7 +423,12 @@ export default function DashboardPage() {
 
             {/* Apps Grid */}
             <Grid container spacing={2}>
-              {filteredServices.map((service, i) => (
+              {[
+                { name: 'Compute', icon: <ComputerIcon sx={{ color: '#ec4899', fontSize: 32 }} /> },
+                { name: 'Storage', icon: <StorageIcon sx={{ color: '#64748b', fontSize: 32 }} /> },
+                { name: 'IAM Console', icon: <SecurityIcon sx={{ color: '#8b5cf6', fontSize: 32 }} /> },
+                { name: 'Analytics', icon: <AssessmentIcon sx={{ color: '#f59e0b', fontSize: 32 }} /> }
+              ].filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase())).map((service, i) => (
                 <Grid size={{ xs: 4, sm: 3, md: 2 }} key={i}>
                   <Box sx={{ 
                     display: 'flex', 
@@ -382,43 +458,6 @@ export default function DashboardPage() {
                   </Box>
                 </Grid>
               ))}
-              {filteredServices.length === 0 && (
-                <Grid size={12}>
-                  <Typography sx={{ color: '#888', textAlign: 'center', py: 4 }}>No services found.</Typography>
-                </Grid>
-              )}
-            </Grid>
-
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 5, mb: 2 }}>
-              <Typography sx={{ fontWeight: 600, fontSize: '0.9rem', color: '#fff' }}>Recommended</Typography>
-              <Button size="small" sx={{ color: '#ccc', textTransform: 'none', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 2 }}>
-                More <Box component="span" sx={{ ml: 0.5, fontSize: '0.7rem' }}>›</Box>
-              </Button>
-            </Box>
-            
-            <Grid container spacing={2}>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', p: 1, borderRadius: 2, '&:hover': { backgroundColor: 'rgba(255,255,255,0.05)' } }}>
-                  <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.1)', width: 36, height: 36, mr: 2, borderRadius: 1 }} variant="rounded">
-                    <AssessmentIcon fontSize="small" sx={{ color: '#ccc' }} />
-                  </Avatar>
-                  <Box>
-                    <Typography sx={{ fontSize: '0.85rem', fontWeight: 500 }}>Usage Report 2026</Typography>
-                    <Typography sx={{ fontSize: '0.75rem', color: '#888' }}>Recently added</Typography>
-                  </Box>
-                </Box>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', p: 1, borderRadius: 2, '&:hover': { backgroundColor: 'rgba(255,255,255,0.05)' } }}>
-                  <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.1)', width: 36, height: 36, mr: 2, borderRadius: 1 }} variant="rounded">
-                    <SettingsIcon fontSize="small" sx={{ color: '#ccc' }} />
-                  </Avatar>
-                  <Box>
-                    <Typography sx={{ fontSize: '0.85rem', fontWeight: 500 }}>System Config</Typography>
-                    <Typography sx={{ fontSize: '0.75rem', color: '#888' }}>You open this often</Typography>
-                  </Box>
-                </Box>
-              </Grid>
             </Grid>
           </Box>
 
