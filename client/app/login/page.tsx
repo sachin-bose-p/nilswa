@@ -1,13 +1,20 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Box, Container, Typography, TextField, Button, Paper, CircularProgress, Alert } from '@mui/material';
+import { 
+  Box, Typography, TextField, Button, CircularProgress, Alert, 
+  Checkbox, FormControlLabel, Link as MuiLink, IconButton, InputAdornment 
+} from '@mui/material';
 import { useRouter } from 'next/navigation';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   
   const [formData, setFormData] = useState({
     username: '',
@@ -57,85 +64,213 @@ export default function LoginPage() {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f8fafc', py: 8 }}>
-      <Container maxWidth="sm">
-        <Paper elevation={0} sx={{ p: { xs: 3, md: 5 }, borderRadius: 4, border: '1px solid #e2e8f0', textAlign: 'center' }}>
-          <Typography variant="h4" sx={{ fontWeight: 800, mb: 1, color: '#0f172a' }}>
-            NILSWA Console
-          </Typography>
-          <Typography variant="body1" sx={{ color: 'text.secondary', mb: 4 }}>
-            Sign in to manage your enterprise cloud services
-          </Typography>
+    <Box sx={{ 
+      minHeight: '100vh', 
+      display: 'flex', 
+      flexDirection: 'column',
+      backgroundColor: '#f8f8f8',
+      backgroundImage: 'radial-gradient(#e5e7eb 1px, transparent 1px)',
+      backgroundSize: '20px 20px'
+    }}>
+      {/* AWS Style Header */}
+      <Box sx={{ 
+        width: '100%', 
+        p: 2, 
+        backgroundColor: '#232f3e', 
+        display: 'flex', 
+        alignItems: 'center',
+        justifyContent: 'space-between'
+      }}>
+        <Typography sx={{ color: '#fff', fontWeight: 800, letterSpacing: '1px' }}>
+          NILSWA Console
+        </Typography>
+      </Box>
 
-          {errorMsg && (
-            <Alert severity="error" sx={{ mb: 4, textAlign: 'left' }}>
-              {errorMsg}
-            </Alert>
-          )}
+      {/* Main Content */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexGrow: 1, py: 8, px: 2 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', md: 'row' },
+          maxWidth: '900px',
+          width: '100%',
+          backgroundColor: '#fff',
+          borderRadius: 2,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+          overflow: 'hidden'
+        }}>
+          
+          {/* Left Form Area */}
+          <Box sx={{ 
+            p: { xs: 4, md: 6 }, 
+            width: { xs: '100%', md: '50%' },
+            borderRight: { xs: 'none', md: '1px solid #e5e7eb' }
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <Typography variant="h5" sx={{ fontWeight: 700, color: '#0f172a', mr: 1 }}>
+                IAM user sign in
+              </Typography>
+              <InfoOutlinedIcon sx={{ color: '#0ea5e9', fontSize: 20 }} />
+            </Box>
 
-          <form onSubmit={handleLogin}>
-            {!requiresMfa ? (
-              <>
-                <TextField 
-                  fullWidth 
-                  name="username" 
-                  value={formData.username} 
-                  onChange={handleChange} 
-                  label="Username" 
-                  variant="outlined" 
-                  sx={{ mb: 3 }} 
-                  required
-                />
-                <TextField 
-                  fullWidth 
-                  name="password" 
-                  type="password"
-                  value={formData.password} 
-                  onChange={handleChange} 
-                  label="Password" 
-                  variant="outlined" 
-                  sx={{ mb: 4 }} 
-                  required
-                />
-              </>
-            ) : (
-              <>
-                <Typography variant="body2" sx={{ mb: 3, fontWeight: 600 }}>
-                  Multi-Factor Authentication Required
-                </Typography>
-                <TextField 
-                  fullWidth 
-                  name="mfa_token" 
-                  value={formData.mfa_token} 
-                  onChange={(e) => setFormData({ ...formData, mfa_token: e.target.value.replace(/[^0-9]/g, '').slice(0, 6) })}
-                  label="6-Digit MFA Code" 
-                  variant="outlined" 
-                  sx={{ mb: 4 }}
-                  slotProps={{ htmlInput: { maxLength: 6, style: { textAlign: 'center', letterSpacing: '4px', fontSize: '1.2rem' } } }}
-                  autoFocus
-                  required
-                />
-              </>
+            {errorMsg && (
+              <Alert severity="error" sx={{ mb: 3 }}>
+                {errorMsg}
+              </Alert>
             )}
 
-            <Button 
-              type="submit"
-              variant="contained" 
-              fullWidth
-              disabled={loading}
-              sx={{ 
-                textTransform: 'none', 
-                fontWeight: 600, 
-                backgroundColor: '#0ea5e9',
-                py: 1.5,
-                '&:hover': { backgroundColor: '#0284c7' }
-              }}
-            >
-              {loading ? <CircularProgress size={24} color="inherit" /> : (requiresMfa ? 'Verify & Sign In' : 'Sign In')}
-            </Button>
-          </form>
-        </Paper>
-      </Container>
+            <form onSubmit={handleLogin}>
+              {!requiresMfa ? (
+                <>
+                  <Typography variant="body2" sx={{ fontWeight: 600, mb: 1, color: '#0f172a' }}>
+                    IAM username
+                  </Typography>
+                  <TextField 
+                    fullWidth 
+                    name="username" 
+                    value={formData.username} 
+                    onChange={handleChange} 
+                    variant="outlined" 
+                    size="small"
+                    sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: 1 } }} 
+                    required
+                  />
+
+                  <Typography variant="body2" sx={{ fontWeight: 600, mb: 1, color: '#0f172a' }}>
+                    Password
+                  </Typography>
+                  <TextField 
+                    fullWidth 
+                    name="password" 
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.password} 
+                    onChange={handleChange} 
+                    variant="outlined" 
+                    size="small"
+                    sx={{ mb: 1, '& .MuiOutlinedInput-root': { borderRadius: 1 } }} 
+                    required
+                  />
+                  
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                    <FormControlLabel 
+                      control={<Checkbox size="small" checked={showPassword} onChange={(e) => setShowPassword(e.target.checked)} sx={{ color: '#0ea5e9' }} />} 
+                      label={<Typography variant="body2" sx={{ color: '#475569' }}>Show Password</Typography>} 
+                    />
+                    <MuiLink href="#" underline="hover" sx={{ fontSize: '0.875rem', color: '#0ea5e9', fontWeight: 500 }}>
+                      Having trouble?
+                    </MuiLink>
+                  </Box>
+                </>
+              ) : (
+                <>
+                  <Typography variant="body2" sx={{ mb: 3, fontWeight: 600, color: '#0f172a' }}>
+                    Multi-Factor Authentication Required
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600, mb: 1, color: '#0f172a' }}>
+                    MFA Code
+                  </Typography>
+                  <TextField 
+                    fullWidth 
+                    name="mfa_token" 
+                    value={formData.mfa_token} 
+                    onChange={(e) => setFormData({ ...formData, mfa_token: e.target.value.replace(/[^0-9]/g, '').slice(0, 6) })}
+                    variant="outlined" 
+                    size="small"
+                    sx={{ mb: 4, '& .MuiOutlinedInput-root': { borderRadius: 1 } }}
+                    slotProps={{ htmlInput: { maxLength: 6, style: { letterSpacing: '2px' } } }}
+                    autoFocus
+                    required
+                  />
+                </>
+              )}
+
+              <Button 
+                type="submit"
+                variant="contained" 
+                fullWidth
+                disabled={loading}
+                sx={{ 
+                  textTransform: 'none', 
+                  fontWeight: 700, 
+                  backgroundColor: '#ff9900',
+                  color: '#111',
+                  py: 1,
+                  borderRadius: 6,
+                  boxShadow: 'none',
+                  mb: 3,
+                  '&:hover': { backgroundColor: '#ec8e00', boxShadow: 'none' }
+                }}
+              >
+                {loading ? <CircularProgress size={24} color="inherit" /> : (requiresMfa ? 'Verify MFA' : 'Sign in')}
+              </Button>
+
+              <Button 
+                variant="outlined" 
+                fullWidth
+                sx={{ 
+                  textTransform: 'none', 
+                  fontWeight: 600, 
+                  color: '#0ea5e9',
+                  borderColor: '#0ea5e9',
+                  py: 1,
+                  borderRadius: 6,
+                  mb: 2,
+                  '&:hover': { backgroundColor: 'rgba(14, 165, 233, 0.05)' }
+                }}
+              >
+                Sign in using root user email
+              </Button>
+
+              <Button 
+                variant="text" 
+                fullWidth
+                sx={{ 
+                  textTransform: 'none', 
+                  fontWeight: 600, 
+                  color: '#0ea5e9',
+                  py: 1,
+                  borderRadius: 6,
+                  '&:hover': { backgroundColor: 'rgba(14, 165, 233, 0.05)' }
+                }}
+              >
+                Create a new NILSWA account
+              </Button>
+            </form>
+          </Box>
+
+          {/* Right Marketing Area */}
+          <Box sx={{ 
+            width: { xs: '100%', md: '50%' },
+            backgroundColor: '#f3e8ff', // subtle purple bg
+            background: 'linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%)',
+            color: '#fff',
+            p: { xs: 4, md: 6 },
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center'
+          }}>
+            <Typography variant="h3" sx={{ fontWeight: 700, mb: 2, lineHeight: 1.2 }}>
+              Your Enterprise cloud databases, AI-ready
+            </Typography>
+            <Typography variant="body1" sx={{ mb: 4, fontSize: '1.1rem', opacity: 0.9 }}>
+              NILSWA Console lets you lift and shift with no rewrites. 34% lower costs.
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="body1" sx={{ fontWeight: 600, mr: 1 }}>
+                Learn why customers migrate
+              </Typography>
+              <Typography variant="body1" sx={{ fontWeight: 600 }}>→</Typography>
+            </Box>
+          </Box>
+
+        </Box>
+      </Box>
+
+      {/* AWS Style Footer */}
+      <Box sx={{ textAlign: 'center', py: 4, color: '#64748b' }}>
+        <Typography variant="body2">
+          By continuing, you agree to NILSWA Customer Agreement or other agreement for NILSWA services.
+        </Typography>
+      </Box>
     </Box>
   );
 }
