@@ -40,9 +40,9 @@ export default function Footer() {
   };
 
   return (
-    <Box sx={{ backgroundColor: '#ffffff', color: '#475569', pt: 8, pb: 4, borderTop: '1px solid #e2e8f0' }}>
+    <Box sx={{ backgroundColor: '#ffffff', color: '#475569', pt: 4, pb: 2, borderTop: '1px solid #e2e8f0' }}>
       <Container maxWidth="xl" sx={{ px: { xs: 2, md: 6 } }}>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: { xs: 2, md: 4 }, mb: 6 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: { xs: 2, md: 4 }, mb: 3 }}>
           {footerLinks[0].links.map((link) => (
             <Link 
               key={link.name} 
@@ -62,7 +62,7 @@ export default function Footer() {
           ))}
         </Box>
 
-        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 6 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
           <Button 
             onClick={scrollToTop}
             sx={{ 
@@ -81,7 +81,7 @@ export default function Footer() {
           </Button>
         </Box>
 
-        <Divider sx={{ borderColor: '#e2e8f0', mb: 4 }} />
+        <Divider sx={{ borderColor: '#e2e8f0', mb: 2 }} />
 
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: 'center', gap: 2 }}>
           <Typography variant="body2" sx={{ color: '#64748b', fontSize: '0.85rem' }}>
