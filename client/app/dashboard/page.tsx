@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { 
   Box, Typography, Drawer, List, ListItem, ListItemButton, 
   ListItemIcon, ListItemText, AppBar, Toolbar, IconButton, 
-  Avatar, Grid, Paper, Divider, Button, CircularProgress
+  Avatar, Paper, Divider, Button
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -26,7 +26,7 @@ export default function DashboardPage() {
   };
 
   const handleLogout = () => {
-    // Basic logout - in real app, clear token/session
+    localStorage.removeItem('nilswa_auth_token');
     router.push('/login');
   };
 
@@ -39,44 +39,51 @@ export default function DashboardPage() {
   ];
 
   const drawer = (
-    <Box sx={{ backgroundColor: '#0f172a', height: '100%', color: '#fff' }}>
-      <Toolbar sx={{ px: 2, py: 1 }}>
-        <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: '1px' }}>
-          NILSWA Enterprise
+    <Box sx={{ backgroundColor: '#ffffff', height: '100%', color: '#334155', borderRight: '1px solid #e2e8f0' }}>
+      <Toolbar sx={{ px: 3, py: 2 }}>
+        <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: '0.5px', color: '#0f172a' }}>
+          <Box component="span" sx={{ color: '#0ea5e9' }}>NILSWA</Box> Enterprise
         </Typography>
       </Toolbar>
-      <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
-      <List sx={{ pt: 2 }}>
-        {menuItems.map((item, index) => (
-          <ListItem key={item.text} disablePadding>
-            <ListItemButton sx={{ 
-              py: 1.5, 
-              px: 3, 
-              backgroundColor: index === 0 ? 'rgba(14, 165, 233, 0.15)' : 'transparent',
-              borderLeft: index === 0 ? '4px solid #0ea5e9' : '4px solid transparent',
-              '&:hover': { backgroundColor: 'rgba(255,255,255,0.05)' } 
-            }}>
-              <ListItemIcon sx={{ color: index === 0 ? '#0ea5e9' : '#94a3b8', minWidth: 40 }}>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText primary={item.text} slotProps={{ primary: { sx: { fontWeight: index === 0 ? 600 : 400, color: index === 0 ? '#fff' : '#cbd5e1' } } }} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+      
+      <List sx={{ pt: 2, px: 2 }}>
+        {menuItems.map((item, index) => {
+          const isActive = index === 0;
+          return (
+            <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
+              <ListItemButton sx={{ 
+                py: 1.5, 
+                px: 2, 
+                borderRadius: 2,
+                backgroundColor: isActive ? '#f0f9ff' : 'transparent',
+                color: isActive ? '#0ea5e9' : '#475569',
+                '&:hover': { backgroundColor: isActive ? '#f0f9ff' : '#f8fafc' } 
+              }}>
+                <ListItemIcon sx={{ color: isActive ? '#0ea5e9' : '#64748b', minWidth: 40 }}>
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText primary={item.text} slotProps={{ primary: { sx: { fontWeight: isActive ? 600 : 500 } } }} />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
       
-      <Box sx={{ position: 'absolute', bottom: 0, width: '100%', p: 2 }}>
-        <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)', mb: 2 }} />
+      <Box sx={{ position: 'absolute', bottom: 0, width: '100%', p: 3 }}>
+        <Divider sx={{ borderColor: '#e2e8f0', mb: 3 }} />
         <Button 
           fullWidth 
-          variant="outlined" 
+          variant="text" 
           startIcon={<LogoutIcon />} 
           onClick={handleLogout}
           sx={{ 
-            color: '#cbd5e1', 
-            borderColor: 'rgba(255,255,255,0.2)',
+            color: '#64748b', 
             textTransform: 'none',
-            '&:hover': { borderColor: '#fff', color: '#fff' }
+            fontWeight: 600,
+            justifyContent: 'flex-start',
+            px: 2,
+            py: 1.5,
+            '&:hover': { backgroundColor: '#f1f5f9', color: '#0f172a' }
           }}
         >
           Sign Out
@@ -89,15 +96,17 @@ export default function DashboardPage() {
     <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f8fafc' }}>
       <AppBar
         position="fixed"
+        elevation={0}
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
-          backgroundColor: '#fff',
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(12px)',
           color: '#0f172a',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+          borderBottom: '1px solid #e2e8f0',
         }}
       >
-        <Toolbar>
+        <Toolbar sx={{ height: 72 }}>
           <IconButton
             color="inherit"
             edge="start"
@@ -106,14 +115,14 @@ export default function DashboardPage() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, fontWeight: 600 }}>
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, fontWeight: 700, color: '#0f172a' }}>
             Dashboard Overview
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Typography variant="body2" sx={{ fontWeight: 500, display: { xs: 'none', md: 'block' } }}>
+            <Typography variant="body2" sx={{ fontWeight: 600, color: '#475569', display: { xs: 'none', md: 'block' } }}>
               Admin User
             </Typography>
-            <Avatar sx={{ bgcolor: '#0ea5e9', width: 36, height: 36 }}>A</Avatar>
+            <Avatar sx={{ bgcolor: '#0ea5e9', width: 40, height: 40, fontWeight: 600 }}>A</Avatar>
           </Box>
         </Toolbar>
       </AppBar>
@@ -143,13 +152,22 @@ export default function DashboardPage() {
         </Drawer>
       </Box>
       
-      <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, width: { sm: `calc(100% - ${drawerWidth}px)` }, mt: '64px' }}>
+      <Box component="main" sx={{ flexGrow: 1, p: { xs: 3, md: 5 }, width: { sm: `calc(100% - ${drawerWidth}px)` }, mt: '72px' }}>
         
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 3, mb: 4 }}>
+        {/* KPI Cards */}
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 3, mb: 5 }}>
           {['Active Instances', 'Total Storage', 'Bandwidth Usage', 'Health Status'].map((title, i) => (
             <Box key={title}>
-              <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column' }}>
-                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600, mb: 1, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <Paper elevation={0} sx={{ 
+                p: 3, 
+                borderRadius: 4, 
+                backgroundColor: '#ffffff',
+                border: '1px solid #f1f5f9',
+                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05)',
+                display: 'flex', 
+                flexDirection: 'column' 
+              }}>
+                <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 600, mb: 1, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   {title}
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 800, color: '#0f172a' }}>
@@ -160,37 +178,63 @@ export default function DashboardPage() {
           ))}
         </Box>
 
+        {/* Charts & Activity */}
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '2fr 1fr' }, gap: 4 }}>
           <Box>
-            <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid #e2e8f0', minHeight: '300px' }}>
-              <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>Resource Utilization</Typography>
-              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', backgroundColor: '#f1f5f9', borderRadius: 2 }}>
-                <Typography color="text.secondary">Chart Visualization Placeholder</Typography>
+            <Paper elevation={0} sx={{ 
+              p: 4, 
+              borderRadius: 4, 
+              backgroundColor: '#ffffff',
+              border: '1px solid #f1f5f9',
+              boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05)',
+              minHeight: '380px',
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#0f172a' }}>Resource Utilization</Typography>
+              <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                flexGrow: 1, 
+                backgroundColor: '#f8fafc', 
+                borderRadius: 3,
+                border: '1px dashed #cbd5e1'
+              }}>
+                <Typography sx={{ color: '#94a3b8', fontWeight: 500 }}>Interactive Chart Area</Typography>
               </Box>
             </Paper>
           </Box>
           <Box>
-            <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid #e2e8f0', minHeight: '300px' }}>
-              <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>Recent Activity</Typography>
+            <Paper elevation={0} sx={{ 
+              p: 4, 
+              borderRadius: 4, 
+              backgroundColor: '#ffffff',
+              border: '1px solid #f1f5f9',
+              boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05)',
+              minHeight: '380px' 
+            }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#0f172a' }}>Recent Activity</Typography>
               <List disablePadding>
                 {[
-                  { action: 'Instance deployed', time: '2 mins ago' },
-                  { action: 'Backup completed', time: '1 hour ago' },
-                  { action: 'MFA Verified', time: '3 hours ago' },
-                  { action: 'User login', time: '3 hours ago' },
+                  { action: 'Instance deployed in ap-northeast-1', time: '2 mins ago' },
+                  { action: 'Daily Backup completed', time: '1 hour ago' },
+                  { action: 'MFA Verified for Admin', time: '3 hours ago' },
+                  { action: 'New API Key generated', time: '5 hours ago' },
                 ].map((log, i) => (
                   <React.Fragment key={i}>
-                    <ListItem alignItems="flex-start" sx={{ px: 0, py: 1.5 }}>
+                    <ListItem alignItems="flex-start" sx={{ px: 0, py: 2 }}>
+                      <Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#0ea5e9', mt: 1, mr: 2 }} />
                       <ListItemText
                         primary={log.action}
                         secondary={log.time}
                         slotProps={{
-                          primary: { sx: { fontWeight: 500, fontSize: '0.9rem' } },
-                          secondary: { sx: { fontSize: '0.75rem', mt: 0.5 } }
+                          primary: { sx: { fontWeight: 600, fontSize: '0.95rem', color: '#334155' } },
+                          secondary: { sx: { fontSize: '0.8rem', mt: 0.5, color: '#94a3b8' } }
                         }}
                       />
                     </ListItem>
-                    {i < 3 && <Divider />}
+                    {i < 3 && <Divider sx={{ borderColor: '#f1f5f9' }} />}
                   </React.Fragment>
                 ))}
               </List>
