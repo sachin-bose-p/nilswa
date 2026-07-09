@@ -9,10 +9,11 @@ from routes import registration, contact
 
 app = FastAPI(title="NILSWA Enterprise API")
 
-# Configure CORS for Next.js frontend (default Next.js port is 3000)
+# Configure CORS for Next.js frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
+    allow_origin_regex="https://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
