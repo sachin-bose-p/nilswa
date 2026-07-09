@@ -26,6 +26,8 @@ function TrackingContent() {
   const [mfaData, setMfaData] = useState({ secret: '', uri: '', token: '' });
   const [mfaLoading, setMfaLoading] = useState(false);
   const [mfaError, setMfaError] = useState('');
+  
+  const [manualAck, setManualAck] = useState('');
 
   const verificationSteps = [
     'Application Submitted',
@@ -138,14 +140,40 @@ function TrackingContent() {
     setMfaLoading(false);
   };
 
+  const handleManualAckSubmit = () => {
+    if (manualAck.trim()) {
+      router.push(`/track?ack=${manualAck.trim()}`);
+    }
+  };
+
   if (!ack) {
     return (
-      <Box sx={{ textAlign: 'center', py: 10 }}>
-        <Typography variant="h5">Please provide an Acknowledgment Number.</Typography>
-        <Button component={Link} href="/register" variant="outlined" sx={{ mt: 3 }}>
-          Return to Registration
-        </Button>
-      </Box>
+      <Paper elevation={0} sx={{ p: { xs: 3, md: 6 }, borderRadius: 4, border: '1px solid #e2e8f0', textAlign: 'center' }}>
+        <Typography variant="h4" sx={{ fontWeight: 800, mb: 2, color: '#0f172a' }}>
+          Resume Application
+        </Typography>
+        <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary', maxWidth: '600px', mx: 'auto' }}>
+          Please enter your Acknowledgment Number to resume your application or account configuration.
+        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 4, maxWidth: '400px', mx: 'auto' }}>
+          <TextField 
+            fullWidth 
+            label="Acknowledgment Number" 
+            placeholder="ACK-..."
+            variant="outlined" 
+            value={manualAck}
+            onChange={(e) => setManualAck(e.target.value)}
+          />
+        </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+          <Button onClick={handleManualAckSubmit} variant="contained" disabled={!manualAck.trim()} sx={{ textTransform: 'none', fontWeight: 600, backgroundColor: '#0ea5e9' }}>
+            Resume
+          </Button>
+          <Button component={Link} href="/register" variant="outlined" sx={{ textTransform: 'none', fontWeight: 600 }}>
+            Return to Registration
+          </Button>
+        </Box>
+      </Paper>
     );
   }
 
