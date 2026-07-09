@@ -74,23 +74,15 @@ export default function DashboardPage() {
     {
       title: 'OVERVIEW',
       items: [
-        { text: 'Dashboard', icon: <DashboardIcon sx={{ fontSize: 20 }} />, active: true },
-        { text: 'My Portal', icon: <WebIcon sx={{ fontSize: 20 }} />, active: false, onClick: () => setSearchOpen(true) },
+        { text: 'Dashboard', icon: <DashboardIcon sx={{ fontSize: 20 }} />, active: true }
       ]
     },
     {
-      title: 'INFRASTRUCTURE',
+      title: 'SERVICES',
       items: [
-        { text: 'Instances', icon: <ComputerIcon sx={{ fontSize: 20 }} />, active: false },
-        { text: 'Storage', icon: <StorageIcon sx={{ fontSize: 20 }} />, active: false },
-        { text: 'Networking', icon: <CompareArrowsIcon sx={{ fontSize: 20 }} />, active: false },
-      ]
-    },
-    {
-      title: 'OPERATIONS',
-      items: [
-        { text: 'Activity Logs', icon: <AccessTimeIcon sx={{ fontSize: 20 }} />, active: false },
-        { text: 'Deployments', icon: <DnsIcon sx={{ fontSize: 20 }} />, active: false },
+        { text: 'Crew CRM', icon: <FlightIcon sx={{ fontSize: 20 }} />, active: false, onClick: () => setSearchOpen(true) },
+        { text: 'Alcohol Check', icon: <LocalHospitalIcon sx={{ fontSize: 20 }} />, active: false, onClick: () => setSearchOpen(true) },
+        { text: 'Real Estate', icon: <WorkIcon sx={{ fontSize: 20 }} />, active: false, onClick: () => setSearchOpen(true) },
       ]
     }
   ];
@@ -180,31 +172,9 @@ export default function DashboardPage() {
             <Typography variant="h6" sx={{ fontWeight: 700, color: '#0f172a', fontSize: '1.1rem', lineHeight: 1.2 }}>
               Dashboard
             </Typography>
-            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.75rem' }}>
-              NILSWA Operations Center • Company ID: NILSWA Enterprise
-            </Typography>
           </Box>
           
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Button 
-              variant="outlined" 
-              size="small"
-              startIcon={<SensorsIcon sx={{ fontSize: 16 }} />}
-              sx={{ 
-                display: { xs: 'none', sm: 'flex' },
-                color: '#10b981', 
-                borderColor: '#10b981',
-                borderRadius: '16px',
-                px: 1.5,
-                py: 0.25,
-                textTransform: 'none',
-                fontWeight: 600,
-                fontSize: '0.75rem',
-                '&:hover': { backgroundColor: '#ecfdf5', borderColor: '#059669' }
-              }}
-            >
-              Live
-            </Button>
             <IconButton sx={{ color: '#64748b' }}>
               <Badge variant="dot" color="error">
                 <NotificationsNoneIcon />
@@ -258,20 +228,6 @@ export default function DashboardPage() {
               Real-time summary of cloud operations, instance status, and storage assignments. Drag to reorder, click gear to resize or theme.
             </Typography>
           </Box>
-          <Button 
-            variant="contained" 
-            startIcon={<AddIcon />}
-            sx={{ 
-              backgroundColor: '#3b82f6', 
-              textTransform: 'none', 
-              fontWeight: 600, 
-              borderRadius: '6px',
-              boxShadow: 'none',
-              '&:hover': { backgroundColor: '#2563eb', boxShadow: 'none' }
-            }}
-          >
-            Add Widget
-          </Button>
         </Box>
 
         {/* KPI Cards */}
@@ -424,10 +380,9 @@ export default function DashboardPage() {
             {/* Apps Grid */}
             <Grid container spacing={2}>
               {[
-                { name: 'Compute', icon: <ComputerIcon sx={{ color: '#ec4899', fontSize: 32 }} /> },
-                { name: 'Storage', icon: <StorageIcon sx={{ color: '#64748b', fontSize: 32 }} /> },
-                { name: 'IAM Console', icon: <SecurityIcon sx={{ color: '#8b5cf6', fontSize: 32 }} /> },
-                { name: 'Analytics', icon: <AssessmentIcon sx={{ color: '#f59e0b', fontSize: 32 }} /> }
+                { name: 'Crew CRM', icon: <FlightIcon sx={{ color: '#3b82f6', fontSize: 32 }} /> },
+                { name: 'Alcohol Check', icon: <LocalHospitalIcon sx={{ color: '#10b981', fontSize: 32 }} /> },
+                { name: 'Real Estate CRM', icon: <WorkIcon sx={{ color: '#f59e0b', fontSize: 32 }} /> }
               ].filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase())).map((service, i) => (
                 <Grid size={{ xs: 4, sm: 3, md: 2 }} key={i}>
                   <Box sx={{ 
