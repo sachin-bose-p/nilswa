@@ -21,7 +21,6 @@ import FlightIcon from '@mui/icons-material/Flight';
 import SecurityIcon from '@mui/icons-material/Security';
 import ComputerIcon from '@mui/icons-material/Computer';
 import StorageIcon from '@mui/icons-material/Storage';
-import WavesIcon from '@mui/icons-material/Waves';
 
 const drawerWidth = 240;
 
@@ -73,7 +72,7 @@ export default function DashboardPage() {
   const drawer = (
     <Box sx={{ backgroundColor: '#ffffff', height: '100%', color: '#334155', borderRight: '1px solid #e2e8f0' }}>
       <Toolbar sx={{ px: 2, py: 1, minHeight: '64px !important', display: 'flex', alignItems: 'center' }}>
-        <WavesIcon sx={{ fontSize: 32, color: '#0ea5e9', mr: 1 }} />
+        <img src="/images/logo.jpg" alt="NILSWA Logo" style={{ height: '36px', width: 'auto', borderRadius: '4px', marginRight: '8px' }} />
         <Typography variant="body2" sx={{ fontWeight: 800, letterSpacing: '1px', color: '#0f172a', mt: 0.5 }}>
           NILSWA
         </Typography>

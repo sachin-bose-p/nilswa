@@ -108,9 +108,12 @@ export default function LoginPage() {
             justifyContent: 'center',
             borderRight: { xs: 'none', md: '1px solid #e5e7eb' }
           }}>
-            <Typography variant="h3" sx={{ fontWeight: 800, mb: 3, letterSpacing: '2px', color: '#0ea5e9' }}>
-              NILSWA
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+              <img src="/images/logo.jpg" alt="NILSWA Logo" style={{ height: '64px', width: 'auto', borderRadius: '8px', marginRight: '16px' }} />
+              <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: '2px', color: '#0f172a' }}>
+                NILSWA
+              </Typography>
+            </Box>
             <Typography variant="h5" sx={{ fontWeight: 600, mb: 2, lineHeight: 1.3 }}>
               Welcome to the NILSWA Enterprise Cloud
             </Typography>
