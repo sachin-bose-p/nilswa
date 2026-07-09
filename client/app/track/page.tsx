@@ -154,7 +154,7 @@ function TrackingContent() {
           </Box>
         )}
 
-        <Grid container spacing={3} justifyContent="center" sx={{ mb: 4 }}>
+        <Grid container spacing={3} sx={{ justifyContent: 'center', mb: 4 }}>
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField 
               fullWidth 

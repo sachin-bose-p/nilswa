@@ -320,7 +320,7 @@ export default function RegisterPage() {
                   </Box>
                 )}
 
-                <Grid container spacing={3} justifyContent="center">
+                <Grid container spacing={3} sx={{ justifyContent: 'center' }}>
                   <Grid size={{ xs: 12, md: 6 }}>
                     <TextField 
                       fullWidth 
