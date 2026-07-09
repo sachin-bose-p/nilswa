@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, Text, DateTime
+from sqlalchemy.sql import func
 from database import Base
 
 class Registration(Base):
@@ -22,3 +23,13 @@ class Registration(Base):
     
     # Workflow Status
     status = Column(String, default="Application Submitted")
+
+class WebRequest(Base):
+    __tablename__ = "webrequests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    full_name = Column(String, nullable=False)
+    company_email = Column(String, index=True, nullable=False)
+    company_name = Column(String, nullable=False)
+    message = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

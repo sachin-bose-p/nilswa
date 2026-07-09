@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import models
 from database import engine
-from routes import registration
+from routes import registration, contact
 
 # We do not run create_all on startup in serverless environments
 # The schema should be created manually via Neon SQL Editor
@@ -19,6 +19,7 @@ app.add_middleware(
 )
 
 app.include_router(registration.router, prefix="/api/v1")
+app.include_router(contact.router, prefix="/api/v1")
 
 @app.get("/")
 def read_root():
