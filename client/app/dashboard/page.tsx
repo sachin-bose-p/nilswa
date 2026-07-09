@@ -48,6 +48,7 @@ export default function DashboardPage() {
   const [collapsed, setCollapsed] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [billingData, setBillingData] = useState<any>(null);
 
   const drawerWidth = collapsed ? drawerWidthCollapsed : drawerWidthExpanded;
 
