@@ -2,11 +2,13 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import NullPool
 
 # Uses a docker-compose local postgres instance by default
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://nilswa:nilswapassword@localhost:5432/nilswadb")
 
-engine = create_engine(DATABASE_URL)
+# Use NullPool for Serverless Environments (Vercel) to prevent connection exhaustion
+engine = create_engine(DATABASE_URL, poolclass=NullPool)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

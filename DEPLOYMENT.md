@@ -1,6 +1,6 @@
 # Continuous Deployment (CD) Setup Guide
 
-This guide explains exactly how to connect your GitHub repository to Vercel (Frontend) and Render (Backend) so that your application automatically builds and deploys every time you push a new commit.
+This guide explains exactly how to connect your GitHub repository to Vercel so that both your Frontend and Backend automatically build and deploy every time you push a new commit.
 
 ---
 
@@ -8,58 +8,58 @@ This guide explains exactly how to connect your GitHub repository to Vercel (Fro
 Ensure your code is pushed to a Git repository.
 ```bash
 git add .
-git commit -m "Monorepo restructure"
+git commit -m "Monorepo restructure and Vercel Config"
 git push origin main
 ```
 
 ---
 
 ## Step 2: Deploy the Database (Free Tier)
-We need a remote PostgreSQL database first, so we have a URL to give to the backend.
-1. Go to [Supabase](https://supabase.com/) or [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres).
-2. Create a new Database project.
-3. Copy the **Connection String** (it will look like `postgresql://user:password@host:port/dbname`).
-4. Go to the SQL Editor in their dashboard, paste the contents of `database/schema.sql`, and hit Run to build your tables.
+We need a remote PostgreSQL database first.
+1. Go to your **Vercel Dashboard** > **Storage** tab.
+2. Click **Create Database** and select **Neon**.
+3. Name it (e.g. `nilswa-db`), pick your Region, and hit **Create**.
+4. Go to the `.env.local` tab and copy the `DATABASE_URL`.
+5. Go to the **Query** tab in Neon, paste the contents of `database/schema.sql`, and hit Run to build your tables.
 
 ---
 
-## Step 3: Deploy the Backend to Render
-Render is the ideal free platform for continuous deployment of Python APIs.
-
-1. Go to [Render.com](https://render.com) and create an account.
-2. Click **New +** and select **Web Service**.
-3. Connect your GitHub account and select your NILSWA repository.
-4. **Configuration Details**:
-   - **Name**: `nilswa-api`
-   - **Root Directory**: `server` *(Critically important!)*
-   - **Environment**: `Python`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-5. **Environment Variables**:
-   - Click Advanced and add a variable named `DATABASE_URL`. Paste the database connection string you got in Step 2.
-6. Click **Create Web Service**. Render will now automatically deploy your API every time you push to GitHub!
-7. **Copy your Render URL** (e.g., `https://nilswa-api.onrender.com`).
-
----
-
-## Step 4: Deploy the Frontend to Vercel
-Vercel is the ultimate hosting platform for Next.js apps.
+## Step 3: Deploy the Backend (Python API) to Vercel
+We will create a specific Vercel project just for the backend.
 
 1. Go to [Vercel.com](https://vercel.com) and click **Add New Project**.
-2. Connect your GitHub account and import the NILSWA repository.
+2. Connect your GitHub account and select your NILSWA repository.
 3. **Configuration Details**:
+   - **Project Name**: `nilswa-api`
+   - **Root Directory**: Click "Edit" and select the `server` folder. *(Critically important!)*
+   - **Framework Preset**: Other (Vercel will automatically detect `vercel.json` and use Python).
+4. **Environment Variables**:
+   - Open the Environment Variables dropdown.
+   - **Name**: `DATABASE_URL`
+   - **Value**: Paste the database connection string you got in Step 2.
+5. Click **Deploy**. Vercel will build your Python API and give you a URL (e.g., `https://nilswa-api.vercel.app`).
+
+---
+
+## Step 4: Deploy the Frontend (Next.js) to Vercel
+We will create a second Vercel project for the frontend.
+
+1. Go to Vercel and click **Add New Project** again.
+2. Select the exact same NILSWA repository.
+3. **Configuration Details**:
+   - **Project Name**: `nilswa-client`
    - **Root Directory**: Click "Edit" and select the `client` folder.
-   - **Framework Preset**: Next.js (should auto-detect).
+   - **Framework Preset**: Next.js.
 4. **Environment Variables**:
    - Open the Environment Variables dropdown.
    - **Name**: `NEXT_PUBLIC_API_URL`
-   - **Value**: Paste the URL of your Render API from Step 3 (e.g., `https://nilswa-api.onrender.com`).
+   - **Value**: Paste the URL of your Vercel Backend from Step 3 (e.g., `https://nilswa-api.vercel.app`).
 5. Click **Deploy**. Vercel will now automatically build and host your Next.js application!
 
 ---
 
 ### You're Done! 🎉
 Every time you push a commit to the `main` branch on GitHub:
-- Vercel will detect changes in the `client/` folder and seamlessly redeploy the frontend.
-- Render will detect changes in the `server/` folder and automatically reboot the Python API. 
-- You now have a robust, fully automated CI/CD pipeline!
+- Your Vercel `nilswa-client` project will seamlessly redeploy the frontend.
+- Your Vercel `nilswa-api` project will seamlessly redeploy the Python API. 
+- You now have a robust, fully automated Serverless CI/CD pipeline!
