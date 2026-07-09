@@ -115,7 +115,7 @@ export default function DashboardPage() {
               {section.items.map((item) => (
                 <ListItem key={item.text} disablePadding sx={{ mb: 0.5, px: collapsed ? 0 : 2 }}>
                   <ListItemButton 
-                    onClick={item.onClick}
+                    onClick={'onClick' in item ? (item as any).onClick : undefined}
                     sx={{ 
                       py: 1, 
                       px: collapsed ? 0 : 2, 
