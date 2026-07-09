@@ -4,8 +4,8 @@ import models
 from database import engine
 from routes import registration
 
-# Create database tables
-models.Base.metadata.create_all(bind=engine)
+# We do not run create_all on startup in serverless environments
+# The schema should be created manually via Neon SQL Editor
 
 app = FastAPI(title="NILSWA Enterprise API")
 
