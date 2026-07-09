@@ -43,6 +43,7 @@ export default function LoginPage() {
           setRequiresMfa(true);
         } else {
           // Success
+          localStorage.setItem('nilswa_auth_token', data.ack_number || 'authenticated');
           router.push('/dashboard');
         }
       } else {

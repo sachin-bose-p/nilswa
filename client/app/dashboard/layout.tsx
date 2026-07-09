@@ -51,67 +51,8 @@ export default function DashboardLayout({
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-            bgcolor: 'background.paper',
-            borderRight: '1px solid rgba(255,255,255,0.05)'
-          },
-        }}
-        variant="permanent"
-        anchor="left"
-      >
-        <Box sx={{ p: 3 }}>
-          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-            <Box component="span" sx={{ color: 'primary.main' }}>NILSWA</Box> Portal
-          </Typography>
-        </Box>
-        <Divider sx={{ borderColor: 'rgba(255,255,255,0.05)' }} />
-        <List sx={{ px: 2, mt: 2 }}>
-          <ListItem disablePadding sx={{ mb: 1 }}>
-            <ListItemButton component={Link} href="/dashboard" sx={{ borderRadius: 2 }}>
-              <ListItemIcon>🏠</ListItemIcon>
-              <ListItemText primary="Overview" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding sx={{ mb: 1 }}>
-            <ListItemButton component={Link} href="/dashboard/product/cats-crm" sx={{ borderRadius: 2 }}>
-              <ListItemIcon>📈</ListItemIcon>
-              <ListItemText primary="Airline Crew" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding sx={{ mb: 1 }}>
-            <ListItemButton component={Link} href="/dashboard/product/alcohol-check" sx={{ borderRadius: 2 }}>
-              <ListItemIcon>🛡️</ListItemIcon>
-              <ListItemText primary="Alcohol Check System" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding sx={{ mb: 1 }}>
-            <ListItemButton component={Link} href="/dashboard/product/real-estate-crm" sx={{ borderRadius: 2 }}>
-              <ListItemIcon>🏢</ListItemIcon>
-              <ListItemText primary="Real Estate CRM" />
-            </ListItemButton>
-          </ListItem>
-
-        </List>
-        <Box sx={{ flexGrow: 1 }} />
-        <Box sx={{ p: 3 }}>
-          <Button variant="outlined" color="error" fullWidth onClick={handleLogout}>
-            Logout
-          </Button>
-        </Box>
-      </Drawer>
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, p: 4, minHeight: '100vh', bgcolor: 'background.default' }}
-      >
-        {children}
-      </Box>
-    </Box>
+    <>
+      {children}
+    </>
   );
 }
