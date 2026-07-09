@@ -17,7 +17,12 @@ function TrackingContent() {
   const [error, setError] = useState('');
   const [status, setStatus] = useState('');
   const [mfaEnabled, setMfaEnabled] = useState(true);
+  const [accountCreated, setAccountCreated] = useState(true);
   
+  const [accountData, setAccountData] = useState({ username: '', password: '', confirmPassword: '' });
+  const [accountLoading, setAccountLoading] = useState(false);
+  const [accountError, setAccountError] = useState('');
+
   const [mfaData, setMfaData] = useState({ secret: '', uri: '', token: '' });
   const [mfaLoading, setMfaLoading] = useState(false);
   const [mfaError, setMfaError] = useState('');
@@ -40,10 +45,15 @@ function TrackingContent() {
         })
         .then(data => {
           setStatus(data.status);
-          if (data.mfa_enabled === false) {
+          if (data.account_created === false) {
+            setAccountCreated(false);
+            setMfaEnabled(false);
+          } else if (data.mfa_enabled === false) {
+            setAccountCreated(true);
             setMfaEnabled(false);
             initMfa(ack);
           } else {
+            setAccountCreated(true);
             setMfaEnabled(true);
           }
           setLoading(false);
@@ -72,6 +82,35 @@ function TrackingContent() {
       console.error(err);
       setMfaError("Network error initializing MFA.");
     }
+  };
+
+  const createAccount = async () => {
+    if (accountData.password !== accountData.confirmPassword) {
+      setAccountError("Passwords do not match");
+      return;
+    }
+    setAccountLoading(true);
+    setAccountError('');
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/api/v1/register/${ack}/account`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: accountData.username, password: accountData.password })
+      });
+      
+      if (response.ok) {
+        setAccountCreated(true);
+        initMfa(ack as string);
+      } else {
+        const errData = await response.json();
+        setAccountError(errData.detail || "Failed to create account.");
+      }
+    } catch (err) {
+      console.error(err);
+      setAccountError("Network error during account creation.");
+    }
+    setAccountLoading(false);
   };
 
   const verifyMfa = async () => {
@@ -128,6 +167,39 @@ function TrackingContent() {
           Return to Registration
         </Button>
       </Box>
+    );
+  }
+
+  if (!accountCreated) {
+    return (
+      <Paper elevation={0} sx={{ p: { xs: 3, md: 6 }, borderRadius: 4, border: '1px solid #e2e8f0', textAlign: 'center' }}>
+        <Typography variant="h4" sx={{ fontWeight: 800, mb: 2, color: '#0f172a' }}>
+          Mandatory Account Setup
+        </Typography>
+        <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary', maxWidth: '600px', mx: 'auto' }}>
+          You must create an admin account before you can track your application or access the dashboard.
+        </Typography>
+        {accountError && <Alert severity="error" sx={{ mb: 4, display: 'inline-flex' }}>{accountError}</Alert>}
+        
+        <Grid container spacing={3} sx={{ justifyContent: 'center', mb: 4, textAlign: 'left' }}>
+          <Grid size={{ xs: 12, md: 8 }}>
+            <TextField fullWidth label="Admin Username" variant="outlined" sx={{ mb: 3 }}
+              value={accountData.username} onChange={e => setAccountData({...accountData, username: e.target.value})} />
+            <TextField fullWidth label="Password" type="password" variant="outlined" sx={{ mb: 3 }}
+              value={accountData.password} onChange={e => setAccountData({...accountData, password: e.target.value})} />
+            <TextField fullWidth label="Confirm Password" type="password" variant="outlined" 
+              value={accountData.confirmPassword} onChange={e => setAccountData({...accountData, confirmPassword: e.target.value})} />
+          </Grid>
+        </Grid>
+        <Button 
+          variant="contained" 
+          disabled={!accountData.username || !accountData.password || accountLoading}
+          onClick={createAccount}
+          sx={{ textTransform: 'none', fontWeight: 600, backgroundColor: '#0ea5e9', px: 4 }}
+        >
+          {accountLoading ? <CircularProgress size={24} color="inherit" /> : 'Create Account & Continue'}
+        </Button>
+      </Paper>
     );
   }
 
