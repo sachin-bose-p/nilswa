@@ -43,64 +43,6 @@ export default function BillingPage() {
 
   return (
     <Box sx={{ display: 'flex', minHeight: 'calc(100vh - 112px)', backgroundColor: '#ffffff' }}>
-      
-      {/* Secondary Sidebar (AWS Style) */}
-      <Box sx={{ width: 250, borderRight: '1px solid #eaeded', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
-        <Box sx={{ p: 2 }}>
-          <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: '#16191f', mb: 2 }}>
-            Billing and Cost Management
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <Switch size="small" defaultChecked color="primary" />
-            <Typography sx={{ fontSize: '0.85rem', fontWeight: 600, ml: 1, color: '#16191f' }}>
-              Billing View
-            </Typography>
-            <Typography sx={{ fontSize: '0.7rem', color: '#0073bb', ml: 1, cursor: 'pointer' }}>New</Typography>
-          </Box>
-        </Box>
-        <Divider sx={{ borderColor: '#eaeded' }} />
-        
-        <Box sx={{ flexGrow: 1, overflowY: 'auto', py: 1 }}>
-          <List dense disablePadding>
-            <ListItem disablePadding>
-              <ListItemButton selected sx={{ borderLeft: '3px solid #e47f00', backgroundColor: '#f2f8fd !important' }}>
-                <ListItemText primary="Home" slotProps={{ primary: { sx: { fontWeight: 700, fontSize: '0.85rem', color: '#0073bb' } } }} />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding><ListItemButton><ListItemText primary="Getting Started" slotProps={{ primary: { sx: { fontSize: '0.85rem', color: '#545b64' } } }} /></ListItemButton></ListItem>
-            <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemText primary="Dashboards" slotProps={{ primary: { sx: { fontSize: '0.85rem', color: '#545b64' } } }} />
-                <Typography sx={{ fontSize: '0.7rem', color: '#0073bb' }}>New</Typography>
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemText primary="FinOps Agent" slotProps={{ primary: { sx: { fontSize: '0.85rem', color: '#545b64' } } }} />
-                <Typography sx={{ fontSize: '0.7rem', color: '#0073bb' }}>Preview</Typography>
-              </ListItemButton>
-            </ListItem>
-          </List>
-
-          <Typography sx={{ px: 2, pt: 2, pb: 1, fontWeight: 700, fontSize: '0.85rem', color: '#16191f' }}>
-            Billing and Payments
-          </Typography>
-          <List dense disablePadding>
-            {['Bills', 'Payments', 'Credits', 'Purchase Orders'].map(text => (
-              <ListItem key={text} disablePadding><ListItemButton><ListItemText primary={text} slotProps={{ primary: { sx: { fontSize: '0.85rem', color: '#545b64' } } }} /></ListItemButton></ListItem>
-            ))}
-          </List>
-
-          <Typography sx={{ px: 2, pt: 2, pb: 1, fontWeight: 700, fontSize: '0.85rem', color: '#16191f' }}>
-            Cost and Usage Analysis
-          </Typography>
-          <List dense disablePadding>
-            {['Cost Explorer', 'Cost Explorer Saved Reports'].map(text => (
-              <ListItem key={text} disablePadding><ListItemButton><ListItemText primary={text} slotProps={{ primary: { sx: { fontSize: '0.85rem', color: '#545b64' } } }} /></ListItemButton></ListItem>
-            ))}
-          </List>
-        </Box>
-      </Box>
 
       {/* Main Content (AWS Style) */}
       <Box sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, backgroundColor: '#f2f4f8' }}>
@@ -112,17 +54,6 @@ export default function BillingPage() {
             <Typography sx={{ fontSize: '0.75rem', color: '#0073bb', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
               Info
             </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button variant="outlined" size="small" sx={{ color: '#0073bb', borderColor: '#0073bb', textTransform: 'none', borderRadius: '20px', fontWeight: 600 }}>
-              Provide feedback
-            </Button>
-            <Button variant="outlined" size="small" sx={{ color: '#0073bb', borderColor: '#0073bb', textTransform: 'none', borderRadius: '20px', fontWeight: 600 }}>
-              Need help? Ask Q ✨
-            </Button>
-            <Button variant="outlined" size="small" sx={{ color: '#0073bb', borderColor: '#0073bb', textTransform: 'none', borderRadius: '20px', fontWeight: 600 }}>
-              Reset layout
-            </Button>
           </Box>
         </Box>
 
@@ -214,44 +145,6 @@ export default function BillingPage() {
               </Paper>
             </Grid>
 
-            {/* Cost breakdown */}
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Paper elevation={0} sx={{ p: 0, borderRadius: '8px', border: '1px solid #eaeded', minHeight: '200px' }}>
-                <Box sx={{ p: 2, display: 'flex', alignItems: 'center', borderBottom: '1px solid #eaeded' }}>
-                  <DashboardIcon sx={{ color: '#545b64', fontSize: 18, mr: 1 }} />
-                  <Typography sx={{ fontWeight: 700, color: '#16191f', fontSize: '1.1rem' }}>Cost breakdown</Typography>
-                  <Typography sx={{ fontSize: '0.75rem', color: '#0073bb', cursor: 'pointer', ml: 1 }}>Info</Typography>
-                </Box>
-                <Box sx={{ p: 2 }}>
-                  <Typography sx={{ color: '#16191f', fontSize: '0.85rem', fontWeight: 700, mb: 1 }}>Group costs by</Typography>
-                  <Box sx={{ p: 1, border: '1px solid #879196', borderRadius: '4px', width: 'fit-content', display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                    <Typography sx={{ fontSize: '0.85rem', mr: 2 }}>Service</Typography>
-                  </Box>
-                  {/* Chart Placeholder */}
-                  <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
-                     <Typography sx={{ color: '#545b64', fontSize: '0.85rem' }}>Loading cost data...</Typography>
-                  </Box>
-                </Box>
-              </Paper>
-            </Grid>
-
-            {/* Recommended actions */}
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Paper elevation={0} sx={{ p: 0, borderRadius: '8px', border: '1px solid #eaeded', minHeight: '200px' }}>
-                <Box sx={{ p: 2, display: 'flex', alignItems: 'center', borderBottom: '1px solid #eaeded' }}>
-                  <DashboardIcon sx={{ color: '#545b64', fontSize: 18, mr: 1 }} />
-                  <Typography sx={{ fontWeight: 700, color: '#16191f', fontSize: '1.1rem' }}>Recommended actions (4)</Typography>
-                  <Typography sx={{ fontSize: '0.75rem', color: '#0073bb', cursor: 'pointer', ml: 1 }}>Info</Typography>
-                </Box>
-                <Box sx={{ p: 3 }}>
-                  <Box sx={{ border: '1px solid #f5b041', backgroundColor: '#fcf3e3', p: 2, borderRadius: '4px' }}>
-                    <Typography sx={{ color: '#945c00', fontWeight: 700, fontSize: '0.9rem', display: 'flex', alignItems: 'center' }}>
-                      <WarningAmberIcon sx={{ mr: 1, fontSize: 18 }} /> Review anomalies
-                    </Typography>
-                  </Box>
-                </Box>
-              </Paper>
-            </Grid>
           </Grid>
         )}
       </Box>
