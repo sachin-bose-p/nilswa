@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Box, Typography, Drawer, List, ListItem, ListItemButton, 
   ListItemIcon, ListItemText, AppBar, Toolbar, IconButton, 
-  Avatar, Paper, Divider, Button, Dialog, InputBase, Grid, Fade
+  Avatar, Paper, Divider, Button, Dialog, InputBase, Grid
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -302,7 +302,6 @@ export default function DashboardPage() {
       <Dialog 
         open={searchOpen} 
         onClose={() => setSearchOpen(false)}
-        TransitionComponent={Fade}
         PaperProps={{
           sx: {
             position: 'absolute',
