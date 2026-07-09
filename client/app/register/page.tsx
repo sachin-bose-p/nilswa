@@ -313,7 +313,7 @@ export default function RegisterPage() {
                 {mfaData.uri && (
                   <Box sx={{ mb: 4 }}>
                     <img 
-                      src={`https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=${encodeURIComponent(mfaData.uri)}`} 
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(mfaData.uri)}`} 
                       alt="MFA QR Code" 
                       style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '8px' }}
                     />
