@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 import models
 from database import engine
-from routes import registration, contact
+from routes import registration, contact, billing
 
 # We do not run create_all on startup in serverless environments
 # The schema should be created manually via Neon SQL Editor
@@ -31,11 +31,16 @@ def startup_event():
             
             # Also ensure indices on username
             conn.execute(text("CREATE INDEX IF NOT EXISTS ix_registrations_username ON registrations (username)"))
+            
+            # Create company_services table if it doesn't exist
+            models.CompanyService.__table__.create(bind=engine, checkfirst=True)
+            
     except Exception as e:
         print(f"Migration error: {e}")
 
 app.include_router(registration.router, prefix="/api/v1")
 app.include_router(contact.router, prefix="/api/v1")
+app.include_router(billing.router, prefix="/api/v1")
 
 @app.get("/")
 def read_root():

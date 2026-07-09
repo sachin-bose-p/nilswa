@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, Text, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, Text, DateTime, Float, ForeignKey
 from sqlalchemy.sql import func
 from database import Base
 
@@ -38,4 +38,15 @@ class WebRequest(Base):
     company_email = Column(String, index=True, nullable=False)
     company_name = Column(String, nullable=False)
     message = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class CompanyService(Base):
+    __tablename__ = "company_services"
+
+    id = Column(Integer, primary_key=True, index=True)
+    registration_id = Column(Integer, ForeignKey("registrations.id"), index=True)
+    service_name = Column(String, index=True)
+    price_per_user_per_day = Column(Float)
+    active_users = Column(Integer, default=0)
+    is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

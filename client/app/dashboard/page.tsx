@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { 
   Box, Typography, Drawer, List, ListItem, ListItemButton, 
   ListItemIcon, ListItemText, AppBar, Toolbar, IconButton, 
-  Avatar, Paper, Divider, Button, Dialog, InputBase, Grid, Fade, Badge
+  Avatar, Paper, Divider, Button, Dialog, InputBase, Grid, Fade, Badge,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -23,6 +24,7 @@ import ComputerIcon from '@mui/icons-material/Computer';
 import StorageIcon from '@mui/icons-material/Storage';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import SensorsIcon from '@mui/icons-material/Sensors';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import AddIcon from '@mui/icons-material/Add';
@@ -61,6 +63,31 @@ export default function DashboardPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  useEffect(() => {
+    // Check auth
+    const token = localStorage.getItem('nilswa_auth_token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+    const ackNumber = localStorage.getItem('nilswa_ack_number');
+
+    const fetchBilling = async () => {
+      try {
+        const res = await fetch(`https://nilswa-server.vercel.app/api/v1/billing/${ackNumber}`);
+        if (res.ok) {
+          const data = await res.json();
+          setBillingData(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch billing", err);
+      }
+    };
+    if (ackNumber) {
+      fetchBilling();
+    }
+  }, [router]);
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -83,6 +110,12 @@ export default function DashboardPage() {
         { text: 'Crew CRM', icon: <FlightIcon sx={{ fontSize: 20 }} />, active: false, onClick: () => setSearchOpen(true) },
         { text: 'Alcohol Check', icon: <LocalHospitalIcon sx={{ fontSize: 20 }} />, active: false, onClick: () => setSearchOpen(true) },
         { text: 'Real Estate', icon: <WorkIcon sx={{ fontSize: 20 }} />, active: false, onClick: () => setSearchOpen(true) },
+      ]
+    },
+    {
+      title: 'ACCOUNT',
+      items: [
+        { text: 'Billing and Cost Management', icon: <AccountBalanceWalletIcon sx={{ fontSize: 20 }} />, active: false }
       ]
     }
   ];
@@ -222,105 +255,75 @@ export default function DashboardPage() {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
           <Box>
             <Typography variant="h4" sx={{ fontWeight: 800, color: '#0f172a', mb: 0.5 }}>
-              Operations Overview
+              Billing and Cost Management
             </Typography>
             <Typography variant="body2" sx={{ color: '#64748b' }}>
-              Real-time summary of cloud operations, instance status, and storage assignments. Drag to reorder, click gear to resize or theme.
+              Manage your daily cloud costs based on active service modules and users.
             </Typography>
           </Box>
         </Box>
 
-        {/* KPI Cards */}
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 2, mb: 3 }}>
-          {[
-            { title: 'ACTIVE INSTANCES', val: '6', sub: 'running & active', color: '#3b82f6', bg: '#eff6ff', icon: <GroupIcon sx={{ color: '#3b82f6' }} /> },
-            { title: 'PENDING ALERTS', val: '0', sub: 'awaiting review', color: '#f59e0b', bg: '#fffbeb', icon: <HourglassEmptyIcon sx={{ color: '#f59e0b' }} /> },
-            { title: 'TOTAL STORAGE', val: '4.2 TB', sub: 'total allocated', color: '#10b981', bg: '#ecfdf5', icon: <StorageIcon sx={{ color: '#10b981' }} /> },
-            { title: 'DEPLOYMENTS', val: '4', sub: 'scheduled tasks', color: '#a855f7', bg: '#faf5ff', icon: <CalendarTodayIcon sx={{ color: '#a855f7' }} /> },
-          ].map((card, i) => (
-            <Paper key={i} elevation={0} sx={{ 
-              p: 2.5, 
-              borderRadius: '12px', 
-              backgroundColor: '#ffffff',
-              border: '1px solid #e2e8f0',
-              boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
-              display: 'flex',
-              justifyContent: 'space-between'
-            }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <Typography sx={{ color: '#94a3b8', fontSize: '0.65rem', fontWeight: 700, mb: 1, letterSpacing: '1px' }}>
-                  {card.title}
-                </Typography>
-                <Typography sx={{ fontWeight: 700, color: card.color, fontSize: '1.75rem', lineHeight: 1 }}>
-                  {card.val}
-                </Typography>
-                <Typography sx={{ color: '#64748b', fontSize: '0.75rem', mt: 1 }}>
-                  {card.sub}
-                </Typography>
-              </Box>
-              <Box sx={{ 
-                width: 48, height: 48, borderRadius: '50%', backgroundColor: card.bg,
-                display: 'flex', alignItems: 'center', justifyContent: 'center'
-              }}>
-                {card.icon}
-              </Box>
-            </Paper>
-          ))}
-        </Box>
-
-        {/* Charts & Activity */}
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
-          {/* Widget 1 */}
+        {/* Total Cost KPI */}
+        <Box sx={{ mb: 4 }}>
           <Paper elevation={0} sx={{ 
             p: 3, 
             borderRadius: '12px', 
             backgroundColor: '#ffffff',
             border: '1px solid #e2e8f0',
-            boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
-            minHeight: '350px',
+            boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)',
             display: 'flex',
-            flexDirection: 'column'
+            alignItems: 'center',
+            gap: 3
           }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-              <Box>
-                <Typography sx={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>Resource Request Status</Typography>
-                <Typography sx={{ color: '#64748b', fontSize: '0.75rem', mt: 0.5 }}>Distribution by approval status</Typography>
-              </Box>
+            <Box sx={{ width: 64, height: 64, borderRadius: '50%', backgroundColor: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <AccountBalanceWalletIcon sx={{ fontSize: 32, color: '#3b82f6' }} />
             </Box>
-            <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Typography sx={{ color: '#64748b', fontSize: '0.85rem' }}>No request data yet</Typography>
-            </Box>
-          </Paper>
-
-          {/* Widget 2 */}
-          <Paper elevation={0} sx={{ 
-            p: 3, 
-            borderRadius: '12px', 
-            backgroundColor: '#ffffff',
-            border: '1px solid #e2e8f0',
-            boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
-            minHeight: '350px',
-            display: 'flex',
-            flexDirection: 'column'
-          }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <DragIndicatorIcon sx={{ color: '#cbd5e1', fontSize: 20, cursor: 'grab' }} />
-                <Box>
-                  <Typography sx={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>Instance Type Breakdown</Typography>
-                  <Typography sx={{ color: '#64748b', fontSize: '0.75rem', mt: 0.5 }}>Number of instances by category</Typography>
-                </Box>
-              </Box>
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <SettingsIcon sx={{ color: '#0f172a', fontSize: 18, cursor: 'pointer' }} />
-                <CloseIcon sx={{ color: '#0f172a', fontSize: 18, cursor: 'pointer' }} />
-              </Box>
-            </Box>
-            <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Typography sx={{ color: '#64748b', fontSize: '0.85rem' }}>No instance data yet</Typography>
+            <Box>
+              <Typography sx={{ color: '#64748b', fontSize: '0.85rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', mb: 0.5 }}>
+                Estimated Daily Bill
+              </Typography>
+              <Typography sx={{ color: '#0f172a', fontSize: '2.5rem', fontWeight: 800, lineHeight: 1 }}>
+                ${billingData ? billingData.total_daily_cost.toFixed(2) : '0.00'}
+              </Typography>
             </Box>
           </Paper>
         </Box>
+
+        {/* Billing Table */}
+        <Paper elevation={0} sx={{ borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+          <TableContainer>
+            <Table>
+              <TableHead sx={{ backgroundColor: '#f8fafc' }}>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 600, color: '#64748b' }}>Service Name</TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 600, color: '#64748b' }}>Active Users</TableCell>
+                  <TableCell align="right" sx={{ fontWeight: 600, color: '#64748b' }}>Price / User / Day</TableCell>
+                  <TableCell align="right" sx={{ fontWeight: 600, color: '#64748b' }}>Total Daily Cost</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {billingData && billingData.services.length > 0 ? (
+                  billingData.services.map((service: any, idx: number) => (
+                    <TableRow key={idx} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                      <TableCell component="th" scope="row" sx={{ fontWeight: 500, color: '#0f172a' }}>
+                        {service.service_name}
+                      </TableCell>
+                      <TableCell align="center">{service.active_users}</TableCell>
+                      <TableCell align="right">${service.price_per_user_per_day.toFixed(2)}</TableCell>
+                      <TableCell align="right" sx={{ fontWeight: 600 }}>${service.total_daily_cost.toFixed(2)}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} align="center" sx={{ py: 4, color: '#64748b' }}>
+                      {billingData ? 'No active services.' : 'Loading billing details...'}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
       </Box>
 
       {/* Windows 11 Style Start Menu Overlay (Triggered by Ctrl+F or My Portal) */}
