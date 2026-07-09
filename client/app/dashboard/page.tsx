@@ -302,8 +302,9 @@ export default function DashboardPage() {
       <Dialog 
         open={searchOpen} 
         onClose={() => setSearchOpen(false)}
-        PaperProps={{
-          sx: {
+        slotProps={{
+          paper: {
+            sx: {
             position: 'absolute',
             bottom: { xs: 0, md: 'auto' },
             top: { xs: 'auto', md: '15vh' },
@@ -318,7 +319,7 @@ export default function DashboardPage() {
             backgroundImage: 'linear-gradient(145deg, rgba(255,255,255,0.03) 0%, transparent 100%)',
             backdropFilter: 'blur(20px)'
           }
-        }}
+        }}}
       >
         <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', height: { xs: '70vh', md: '600px' } }}>
           {/* Search Bar */}
