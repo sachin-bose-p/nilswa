@@ -3,18 +3,24 @@
 import React, { Suspense, useEffect, useState } from 'react';
 import { 
   Box, Container, Typography, Paper, Stepper, Step, StepLabel, 
-  CircularProgress, Button, Divider, Alert
+  CircularProgress, Button, Divider, Alert, Grid, TextField
 } from '@mui/material';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 function TrackingContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const ack = searchParams.get('ack');
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [status, setStatus] = useState('');
+  const [mfaEnabled, setMfaEnabled] = useState(true);
+  
+  const [mfaData, setMfaData] = useState({ secret: '', uri: '', token: '' });
+  const [mfaLoading, setMfaLoading] = useState(false);
+  const [mfaError, setMfaError] = useState('');
 
   const verificationSteps = [
     'Application Submitted',
@@ -34,6 +40,12 @@ function TrackingContent() {
         })
         .then(data => {
           setStatus(data.status);
+          if (data.mfa_enabled === false) {
+            setMfaEnabled(false);
+            initMfa(ack);
+          } else {
+            setMfaEnabled(true);
+          }
           setLoading(false);
         })
         .catch(err => {
@@ -42,6 +54,50 @@ function TrackingContent() {
         });
     }
   }, [ack]);
+
+  const initMfa = async (ackNumber: string) => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const mfaResponse = await fetch(`${apiUrl}/api/v1/register/${ackNumber}/mfa/setup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (mfaResponse.ok) {
+        const mfaDetails = await mfaResponse.json();
+        setMfaData(prev => ({ ...prev, secret: mfaDetails.secret, uri: mfaDetails.uri }));
+      } else {
+        setMfaError("Failed to initialize MFA.");
+      }
+    } catch (err) {
+      console.error(err);
+      setMfaError("Network error initializing MFA.");
+    }
+  };
+
+  const verifyMfa = async () => {
+    setMfaLoading(true);
+    setMfaError('');
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/api/v1/register/${ack}/mfa/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: mfaData.token })
+      });
+      
+      if (response.ok) {
+        setMfaEnabled(true);
+        router.push('/dashboard');
+      } else {
+        const errData = await response.json();
+        setMfaError(errData.detail || "Invalid MFA token.");
+      }
+    } catch (err) {
+      console.error(err);
+      setMfaError("Network error during MFA verification.");
+    }
+    setMfaLoading(false);
+  };
 
   if (!ack) {
     return (
@@ -72,6 +128,53 @@ function TrackingContent() {
           Return to Registration
         </Button>
       </Box>
+    );
+  }
+
+  if (!mfaEnabled) {
+    return (
+      <Paper elevation={0} sx={{ p: { xs: 3, md: 6 }, borderRadius: 4, border: '1px solid #e2e8f0', textAlign: 'center' }}>
+        <Typography variant="h4" sx={{ fontWeight: 800, mb: 2, color: '#0f172a' }}>
+          Mandatory MFA Configuration
+        </Typography>
+        <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary', maxWidth: '600px', mx: 'auto' }}>
+          You must configure Multi-Factor Authentication before accessing your application status or dashboard.
+          Scan the QR code using Google or Microsoft Authenticator.
+        </Typography>
+
+        {mfaError && <Alert severity="error" sx={{ mb: 4, display: 'inline-flex' }}>{mfaError}</Alert>}
+
+        {mfaData.uri && (
+          <Box sx={{ mb: 4 }}>
+            <img 
+              src={`https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=${encodeURIComponent(mfaData.uri)}`} 
+              alt="MFA QR Code" 
+              style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '8px' }}
+            />
+          </Box>
+        )}
+
+        <Grid container spacing={3} justifyContent="center" sx={{ mb: 4 }}>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField 
+              fullWidth 
+              label="6-Digit MFA Code" 
+              variant="outlined" 
+              value={mfaData.token}
+              onChange={(e) => setMfaData({ ...mfaData, token: e.target.value.replace(/[^0-9]/g, '').slice(0, 6) })}
+              slotProps={{ htmlInput: { maxLength: 6, style: { textAlign: 'center', letterSpacing: '4px', fontSize: '1.2rem' } } }}
+            />
+          </Grid>
+        </Grid>
+        <Button 
+          variant="contained" 
+          disabled={mfaData.token.length !== 6 || mfaLoading}
+          onClick={verifyMfa}
+          sx={{ textTransform: 'none', fontWeight: 600, backgroundColor: '#0ea5e9', px: 4 }}
+        >
+          {mfaLoading ? <CircularProgress size={24} color="inherit" /> : 'Verify & Continue'}
+        </Button>
+      </Paper>
     );
   }
 
@@ -128,8 +231,8 @@ function TrackingContent() {
 
       <Divider sx={{ my: 4 }} />
       
-      <Button variant="outlined" component={Link} href="/" sx={{ textTransform: 'none', fontWeight: 600 }}>
-        Return to Home
+      <Button variant="outlined" component={Link} href="/dashboard" sx={{ textTransform: 'none', fontWeight: 600 }}>
+        Go to Dashboard
       </Button>
     </Paper>
   );

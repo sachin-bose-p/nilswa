@@ -8,11 +8,12 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-const steps = ['Company Profile', 'Admin Details', 'Security & Terms'];
+const steps = ['Company Profile', 'Admin Details', 'Security & Terms', 'Account Setup', 'MFA Configuration'];
 
 export default function RegisterPage() {
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [ackNumber, setAckNumber] = useState('');
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -33,6 +34,20 @@ export default function RegisterPage() {
     background: false
   });
 
+  const [accountData, setAccountData] = useState({
+    username: '',
+    password: '',
+    confirmPassword: ''
+  });
+
+  const [mfaData, setMfaData] = useState({
+    secret: '',
+    uri: '',
+    token: ''
+  });
+  
+  const [errorMsg, setErrorMsg] = useState('');
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -40,8 +55,17 @@ export default function RegisterPage() {
     });
   };
 
+  const handleAccountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAccountData({
+      ...accountData,
+      [e.target.name]: e.target.value
+    });
+  };
+
   const handleNext = async () => {
-    if (activeStep === steps.length - 1) {
+    setErrorMsg('');
+    if (activeStep === 2) {
+      // Submit registration
       setLoading(true);
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -53,16 +77,76 @@ export default function RegisterPage() {
         
         if (response.ok) {
           const data = await response.json();
-          router.push(`/track?ack=${data.ack_number}`);
+          setAckNumber(data.ack_number);
+          setActiveStep(3); // move to account setup
         } else {
-          console.error("Failed to register");
-          // Revert back on error
-          setLoading(false);
+          setErrorMsg("Failed to register. Please try again.");
         }
       } catch (err) {
         console.error(err);
-        setLoading(false);
+        setErrorMsg("Network error during registration.");
       }
+      setLoading(false);
+    } else if (activeStep === 3) {
+      // Submit account
+      if (accountData.password !== accountData.confirmPassword) {
+        setErrorMsg("Passwords do not match");
+        return;
+      }
+      setLoading(true);
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+        const response = await fetch(`${apiUrl}/api/v1/register/${ackNumber}/account`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: accountData.username, password: accountData.password })
+        });
+        
+        if (response.ok) {
+          // Initialize MFA
+          const mfaResponse = await fetch(`${apiUrl}/api/v1/register/${ackNumber}/mfa/setup`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          if (mfaResponse.ok) {
+            const mfaDetails = await mfaResponse.json();
+            setMfaData({ ...mfaData, secret: mfaDetails.secret, uri: mfaDetails.uri });
+            setActiveStep(4); // move to MFA setup
+          } else {
+            setErrorMsg("Failed to initialize MFA.");
+          }
+        } else {
+          const errData = await response.json();
+          setErrorMsg(errData.detail || "Failed to create account.");
+        }
+      } catch (err) {
+        console.error(err);
+        setErrorMsg("Network error during account creation.");
+      }
+      setLoading(false);
+    } else if (activeStep === 4) {
+      // Submit MFA verify
+      setLoading(true);
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+        const response = await fetch(`${apiUrl}/api/v1/register/${ackNumber}/mfa/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: mfaData.token })
+        });
+        
+        if (response.ok) {
+          // Both Registration and Account creation are done.
+          router.push(`/dashboard`);
+        } else {
+          const errData = await response.json();
+          setErrorMsg(errData.detail || "Invalid MFA token.");
+        }
+      } catch (err) {
+        console.error(err);
+        setErrorMsg("Network error during MFA verification.");
+      }
+      setLoading(false);
     } else {
       setActiveStep((prev) => prev + 1);
     }
@@ -72,7 +156,14 @@ export default function RegisterPage() {
     setActiveStep((prev) => prev - 1);
   };
 
-  const canSubmit = termsAccepted.auth && termsAccepted.msa && termsAccepted.background;
+  const canSubmitReg = termsAccepted.auth && termsAccepted.msa && termsAccepted.background;
+  const canSubmitAccount = accountData.username && accountData.password && accountData.confirmPassword;
+  const canSubmitMfa = mfaData.token.length === 6;
+
+  let btnDisabled = loading;
+  if (activeStep === 2 && !canSubmitReg) btnDisabled = true;
+  if (activeStep === 3 && !canSubmitAccount) btnDisabled = true;
+  if (activeStep === 4 && !canSubmitMfa) btnDisabled = true;
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#f8fafc', py: 8 }}>
@@ -94,6 +185,12 @@ export default function RegisterPage() {
               </Step>
             ))}
           </Stepper>
+
+          {errorMsg && (
+            <Alert severity="error" sx={{ mb: 4 }}>
+              {errorMsg}
+            </Alert>
+          )}
 
           <Box sx={{ mb: 6, minHeight: '250px' }}>
             {activeStep === 0 && (
@@ -184,6 +281,60 @@ export default function RegisterPage() {
                 </Box>
               </Box>
             )}
+
+            {activeStep === 3 && (
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>Account Setup</Typography>
+                <Typography variant="body2" sx={{ mb: 4, color: 'text.secondary' }}>
+                  Please create your administrator username and password. This will be used to access the NILSWA CRM Dashboard.
+                </Typography>
+                
+                <Grid container spacing={3}>
+                  <Grid size={{ xs: 12 }}>
+                    <TextField fullWidth name="username" value={accountData.username} onChange={handleAccountChange} label="Username" variant="outlined" />
+                  </Grid>
+                  <Grid size={{ xs: 12 }}>
+                    <TextField fullWidth name="password" type="password" value={accountData.password} onChange={handleAccountChange} label="Password" variant="outlined" />
+                  </Grid>
+                  <Grid size={{ xs: 12 }}>
+                    <TextField fullWidth name="confirmPassword" type="password" value={accountData.confirmPassword} onChange={handleAccountChange} label="Confirm Password" variant="outlined" />
+                  </Grid>
+                </Grid>
+              </Box>
+            )}
+
+            {activeStep === 4 && (
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>Mandatory MFA Configuration</Typography>
+                <Typography variant="body2" sx={{ mb: 4, color: 'text.secondary' }}>
+                  Scan the QR code below using Google Authenticator or Microsoft Authenticator, then enter the 6-digit code.
+                </Typography>
+                
+                {mfaData.uri && (
+                  <Box sx={{ mb: 4 }}>
+                    <img 
+                      src={`https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=${encodeURIComponent(mfaData.uri)}`} 
+                      alt="MFA QR Code" 
+                      style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '8px' }}
+                    />
+                  </Box>
+                )}
+
+                <Grid container spacing={3} justifyContent="center">
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <TextField 
+                      fullWidth 
+                      label="6-Digit MFA Code" 
+                      variant="outlined" 
+                      value={mfaData.token}
+                      onChange={(e) => setMfaData({ ...mfaData, token: e.target.value.replace(/[^0-9]/g, '').slice(0, 6) })}
+                      slotProps={{ htmlInput: { maxLength: 6, style: { textAlign: 'center', letterSpacing: '4px', fontSize: '1.2rem' } } }}
+                    />
+                  </Grid>
+                </Grid>
+              </Box>
+            )}
+
           </Box>
 
           <Divider sx={{ mb: 3 }} />
@@ -191,7 +342,7 @@ export default function RegisterPage() {
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
               color="inherit"
-              disabled={activeStep === 0 || loading}
+              disabled={activeStep === 0 || loading || activeStep > 2} // Prevent backing out of account creation easily for now
               onClick={handleBack}
               sx={{ mr: 1, textTransform: 'none', fontWeight: 600 }}
             >
@@ -199,7 +350,7 @@ export default function RegisterPage() {
             </Button>
             <Button 
               variant="contained" 
-              disabled={loading || (activeStep === steps.length - 1 && !canSubmit)}
+              disabled={btnDisabled}
               onClick={handleNext}
               sx={{ 
                 textTransform: 'none', 
@@ -209,7 +360,10 @@ export default function RegisterPage() {
                 '&:hover': { backgroundColor: '#0284c7' }
               }}
             >
-              {loading ? <CircularProgress size={24} color="inherit" /> : (activeStep === steps.length - 1 ? 'Submit Application' : 'Next Step')}
+              {loading ? <CircularProgress size={24} color="inherit" /> : 
+                (activeStep === 2 ? 'Submit Application' : 
+                 activeStep === 3 ? 'Create Account' :
+                 activeStep === 4 ? 'Verify & Go to Dashboard' : 'Next Step')}
             </Button>
           </Box>
         </Paper>

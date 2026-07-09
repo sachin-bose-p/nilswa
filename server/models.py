@@ -21,6 +21,12 @@ class Registration(Base):
     admin_title = Column(String)
     admin_phone = Column(String)
     
+    # Account & Security
+    username = Column(String, unique=True, index=True, nullable=True)
+    password_hash = Column(String, nullable=True)
+    mfa_secret = Column(String, nullable=True)
+    mfa_enabled = Column(Boolean, default=False)
+    
     # Workflow Status
     status = Column(String, default="Application Submitted")
 

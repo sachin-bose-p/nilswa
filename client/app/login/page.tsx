@@ -1,94 +1,138 @@
 'use client';
 
-import * as React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { Box, Container, Typography, TextField, Button, Paper, CircularProgress, Alert } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
-import Alert from '@mui/material/Alert';
 
-export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+export default function LoginPage() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+    mfa_token: ''
+  });
+  
+  const [requiresMfa, setRequiresMfa] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-
-    if (!email || !password) {
-      setError('Please fill in all fields.');
-      return;
+    setLoading(true);
+    setErrorMsg('');
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/api/v1/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        if (data.requires_mfa) {
+          setRequiresMfa(true);
+        } else {
+          // Success
+          router.push('/dashboard');
+        }
+      } else {
+        setErrorMsg(data.detail || 'Login failed');
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMsg('Network error');
     }
-
-    const domain = email.split('@')[1];
-    if (!domain) {
-      setError('Please enter a valid email address.');
-      return;
-    }
-
-    const blockedDomains = ['gmail.com', 'outlook.com', 'yahoo.com', 'hotmail.com'];
-    if (blockedDomains.includes(domain.toLowerCase())) {
-      setError('Access restricted to company domain emails only. Personal email domains are not allowed.');
-      return;
-    }
-
-    // Mock successful login: save mock token and redirect
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('nilswa_auth_token', 'mock_token_' + email);
-      router.push('/dashboard');
-    }
+    setLoading(false);
   };
 
   return (
-    <Box sx={{ py: 10, flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f8fafc', py: 8 }}>
       <Container maxWidth="sm">
-        <Paper sx={{ 
-          p: { xs: 4, md: 6 }, 
-          backgroundColor: '#ffffff', 
-          
-          border: '1px solid #e2e8f0',
-          borderRadius: 4,
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
-        }}>
-          <Typography variant="h3" align="center" gutterBottom sx={{ fontWeight: "bold" }}>
-            Sign <Box component="span" sx={{ color: '#111827' }}>In</Box>
+        <Paper elevation={0} sx={{ p: { xs: 3, md: 5 }, borderRadius: 4, border: '1px solid #e2e8f0', textAlign: 'center' }}>
+          <Typography variant="h4" sx={{ fontWeight: 800, mb: 1, color: '#0f172a' }}>
+            NILSWA Console
           </Typography>
-          <Typography align="center" color="text.secondary" sx={{ mb: 4 }}>
-            Access your NILSWA Cloud Dashboard
+          <Typography variant="body1" sx={{ color: 'text.secondary', mb: 4 }}>
+            Sign in to manage your enterprise cloud services
           </Typography>
 
-          {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+          {errorMsg && (
+            <Alert severity="error" sx={{ mb: 4, textAlign: 'left' }}>
+              {errorMsg}
+            </Alert>
+          )}
 
-          <Box component="form" onSubmit={handleLogin}>
-            <TextField 
-              fullWidth 
-              label="Company Email" 
-              variant="outlined" 
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              sx={{ mb: 3 }}
-              placeholder="name@yourcompany.com"
-            />
-            <TextField 
-              fullWidth 
-              label="Password" 
-              variant="outlined" 
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              sx={{ mb: 4 }}
-            />
-            <Button type="submit" variant="contained" size="large" fullWidth sx={{ py: 1.5, fontSize: '1.1rem' }}>
-              Login to Dashboard
+          <form onSubmit={handleLogin}>
+            {!requiresMfa ? (
+              <>
+                <TextField 
+                  fullWidth 
+                  name="username" 
+                  value={formData.username} 
+                  onChange={handleChange} 
+                  label="Username" 
+                  variant="outlined" 
+                  sx={{ mb: 3 }} 
+                  required
+                />
+                <TextField 
+                  fullWidth 
+                  name="password" 
+                  type="password"
+                  value={formData.password} 
+                  onChange={handleChange} 
+                  label="Password" 
+                  variant="outlined" 
+                  sx={{ mb: 4 }} 
+                  required
+                />
+              </>
+            ) : (
+              <>
+                <Typography variant="body2" sx={{ mb: 3, fontWeight: 600 }}>
+                  Multi-Factor Authentication Required
+                </Typography>
+                <TextField 
+                  fullWidth 
+                  name="mfa_token" 
+                  value={formData.mfa_token} 
+                  onChange={(e) => setFormData({ ...formData, mfa_token: e.target.value.replace(/[^0-9]/g, '').slice(0, 6) })}
+                  label="6-Digit MFA Code" 
+                  variant="outlined" 
+                  sx={{ mb: 4 }}
+                  slotProps={{ htmlInput: { maxLength: 6, style: { textAlign: 'center', letterSpacing: '4px', fontSize: '1.2rem' } } }}
+                  autoFocus
+                  required
+                />
+              </>
+            )}
+
+            <Button 
+              type="submit"
+              variant="contained" 
+              fullWidth
+              disabled={loading}
+              sx={{ 
+                textTransform: 'none', 
+                fontWeight: 600, 
+                backgroundColor: '#0ea5e9',
+                py: 1.5,
+                '&:hover': { backgroundColor: '#0284c7' }
+              }}
+            >
+              {loading ? <CircularProgress size={24} color="inherit" /> : (requiresMfa ? 'Verify & Sign In' : 'Sign In')}
             </Button>
-          </Box>
+          </form>
         </Paper>
       </Container>
     </Box>
