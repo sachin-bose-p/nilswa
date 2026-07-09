@@ -145,9 +145,9 @@ export default function DashboardPage() {
       
       <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, width: { sm: `calc(100% - ${drawerWidth}px)` }, mt: '64px' }}>
         
-        <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 3, mb: 4 }}>
           {['Active Instances', 'Total Storage', 'Bandwidth Usage', 'Health Status'].map((title, i) => (
-            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={title}>
+            <Box key={title}>
               <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column' }}>
                 <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600, mb: 1, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   {title}
@@ -156,20 +156,20 @@ export default function DashboardPage() {
                   {i === 0 ? '12' : i === 1 ? '4.2 TB' : i === 2 ? '890 GB' : '99.9%'}
                 </Typography>
               </Paper>
-            </Grid>
+            </Box>
           ))}
-        </Grid>
+        </Box>
 
-        <Grid container spacing={4}>
-          <Grid size={{ xs: 12, md: 8 }}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '2fr 1fr' }, gap: 4 }}>
+          <Box>
             <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid #e2e8f0', minHeight: '300px' }}>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>Resource Utilization</Typography>
               <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', backgroundColor: '#f1f5f9', borderRadius: 2 }}>
                 <Typography color="text.secondary">Chart Visualization Placeholder</Typography>
               </Box>
             </Paper>
-          </Grid>
-          <Grid size={{ xs: 12, md: 4 }}>
+          </Box>
+          <Box>
             <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid #e2e8f0', minHeight: '300px' }}>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>Recent Activity</Typography>
               <List disablePadding>
@@ -195,8 +195,8 @@ export default function DashboardPage() {
                 ))}
               </List>
             </Paper>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </Box>
     </Box>
   );
