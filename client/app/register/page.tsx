@@ -173,9 +173,12 @@ export default function RegisterPage() {
             <Typography variant="h3" sx={{ fontWeight: 800, mb: 2, color: '#0f172a' }}>
               Enterprise Onboarding
             </Typography>
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
               NILSWA is an exclusive enterprise cloud platform. Please provide your corporate details for our internal verification process.
             </Typography>
+            <Button component={Link} href="/track" variant="text" sx={{ textTransform: 'none', fontWeight: 600, color: '#0ea5e9' }}>
+              Already have an Acknowledgment Number? Resume here
+            </Button>
           </Box>
 
           <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 6 }}>
